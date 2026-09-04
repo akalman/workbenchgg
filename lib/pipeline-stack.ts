@@ -15,6 +15,7 @@ export class PipelineStack extends Stack {
             synth: new ShellStep('Synth', {
                 input: CodePipelineSource.connection('akalman/workbenchgg', 'master', {
                     connectionArn: 'arn:aws:codeconnections:us-west-2:256157865211:connection/b8ce04c4-b9f9-4b86-b33d-24785b30ff3c',
+                    actionName: 'workbench.gg source',
                 }),
                 commands: ['npm ci', 'npm run build', 'npx cdk synth']
             })
