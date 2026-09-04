@@ -1,5 +1,5 @@
 export enum Fabrics {
-    Staging,
+    Sandbox,
     Live
 }
 
@@ -22,13 +22,13 @@ export const Clients: ClientsInfo = {
         package: 'wtrouble-test',
         branch: 'main',
         subdomain: 'test-wtrouble',
-        fabrics: [ Fabrics.Staging, Fabrics.Live ]
+        fabrics: [Fabrics.Sandbox, Fabrics.Live]
     },
     'TestGameTracker': {
         author: 'akalman',
         package: 'gaming_website_test',
         branch: 'main',
         subdomain: 'test-game-tracker',
-        fabrics: [ Fabrics.Staging ]
+        fabrics: [Fabrics.Sandbox]
     },
 };
