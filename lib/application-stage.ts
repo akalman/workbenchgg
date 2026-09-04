@@ -3,12 +3,14 @@ import { Construct } from "constructs";
 import { Clients, Fabrics } from '../config/clients';
 import { EnvironmentInfo } from '../config/environments';
 import { ClientPipelineStack } from './client-pipeline-stack';
+import { IRole } from 'aws-cdk-lib/aws-iam';
 
 export interface ApplicationStageProps extends StageProps {
     pipelineEnv: EnvironmentInfo;
     devEnv: EnvironmentInfo;
     prodEnv: EnvironmentInfo;
     fabric: Fabrics;
+    connectionRole: IRole;
 }
 
 export class ApplicationStage extends Stage {
@@ -25,6 +27,7 @@ export class ApplicationStage extends Stage {
                     pipelineEnv: props.pipelineEnv,
                     devEnv: props.devEnv,
                     prodEnv: props.prodEnv,
+                    connectionRole: props.connectionRole,
                 });
             }
         });

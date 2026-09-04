@@ -1,0 +1,1 @@
+export const ConnectionArn: string = 'arn:aws:codeconnections:us-west-2:256157865211:connection/35e9901e-9116-43ef-be60-fe4640cabe78';

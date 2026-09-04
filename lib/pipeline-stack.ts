@@ -4,7 +4,8 @@ import { Construct } from 'constructs';
 import { Fabrics } from '../config/clients';
 import { Environments } from '../config/environments';
 import { ApplicationStage } from './application-stage';
-import { GlobalNetworkStage } from './global-network-stage';
+import { GlobalResourcesStage } from './global-resources-stage';
+import { ConnectionArn } from '../config/constants';
 
 export class PipelineStack extends Stack {
     constructor(scope: Construct, id: string, props: StackProps) {
@@ -15,16 +16,17 @@ export class PipelineStack extends Stack {
             crossAccountKeys: true,
             synth: new ShellStep('Synth', {
                 input: CodePipelineSource.connection('akalman/workbenchgg', 'master', {
-                    connectionArn: 'arn:aws:codeconnections:us-west-2:256157865211:connection/35e9901e-9116-43ef-be60-fe4640cabe78',
+                    connectionArn: ConnectionArn,
                     actionName: 'workbenchgg-source',
                 }),
                 commands: ['npm ci', 'npm run build', 'npx cdk synth']
             })
         });
 
-        pipeline.addStage(new GlobalNetworkStage(this, 'WorkbenchggNetworking', {
+        const globalsStage = new GlobalResourcesStage(this, 'WorkbenchggNetworking', {
             env: props.env,
-        }));
+        });
+        pipeline.addStage(globalsStage);
 
         pipeline.addStage(new ApplicationStage(this, 'WorkbenchggApplication-Dev', {
             env: {
@@ -35,6 +37,7 @@ export class PipelineStack extends Stack {
             devEnv: Environments.ClientSandboxDev,
             prodEnv: Environments.ClientSandboxDev,
             fabric: Fabrics.Sandbox,
+            connectionRole: globalsStage.connectionRole,
         }));
 
         pipeline.addStage(
@@ -47,6 +50,7 @@ export class PipelineStack extends Stack {
                 devEnv: Environments.ClientLiveDev,
                 prodEnv: Environments.ClientLiveProd,
                 fabric: Fabrics.Live,
+                connectionRole: globalsStage.connectionRole,
             }),
             {
                 pre: [
