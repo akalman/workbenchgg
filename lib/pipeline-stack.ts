@@ -14,7 +14,7 @@ export class PipelineStack extends Stack {
             crossAccountKeys: true,
             synth: new ShellStep('Synth', {
                 input: CodePipelineSource.connection('akalman/workbenchgg', 'master', {
-                    connectionArn: 'arn:aws:codeconnections:us-west-2:256157865211:connection/b8ce04c4-b9f9-4b86-b33d-24785b30ff3c',
+                    connectionArn: 'arn:aws:codeconnections:us-west-2:256157865211:connection/35e9901e-9116-43ef-be60-fe4640cabe78',
                     actionName: 'workbench.gg source',
                 }),
                 commands: ['npm ci', 'npm run build', 'npx cdk synth']
