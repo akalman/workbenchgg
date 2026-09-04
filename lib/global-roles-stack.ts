@@ -1,5 +1,5 @@
 import { Stack, StackProps } from 'aws-cdk-lib';
-import { AccountPrincipal, CompositePrincipal, Effect, IRole, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
+import { AccountPrincipal, AnyPrincipal, CompositePrincipal, Effect, IRole, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 import { Environments } from '../config/environments';
 import { ConnectionArn } from '../config/constants';
@@ -12,7 +12,8 @@ export class GlobalRolesStack extends Stack {
 
         const connectionRole = new Role(this, 'WorkbenchggConnectionRole', {
             roleName: 'WorkbenchggConnectionRole',
-            assumedBy: new ServicePrincipal('codebuild.amazonaws.com'),
+            assumedBy: new AnyPrincipal(),
+            // assumedBy: new ServicePrincipal('codebuild.amazonaws.com'),
             // assumedBy: new CompositePrincipal(
 
             //     new AccountPrincipal(Environments.AppDev.id),
@@ -35,6 +36,7 @@ export class GlobalRolesStack extends Stack {
             actions: [
                 'codeconnections:UseConnection',
                 'codeconnections:GetConnection',
+                'codeconnections:GetConnectionToken',
                 'codeconnections:ListConnections',
             ],
             resources: [ ConnectionArn ],

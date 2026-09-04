@@ -7,7 +7,7 @@ import { EnvironmentInfo } from '../config/environments';
 import { S3DeployAction } from 'aws-cdk-lib/aws-codepipeline-actions';
 import { Artifact } from 'aws-cdk-lib/aws-codepipeline';
 import { ConnectionArn } from '../config/constants';
-import { IRole } from 'aws-cdk-lib/aws-iam';
+import { Effect, IRole, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
 export interface ClientStackProps extends StackProps {
     clientName: string;
@@ -34,6 +34,13 @@ export class ClientPipelineStack extends Stack {
             }),
             commands: ['echo "Done."'],
             role: props.connectionRole,
+            rolePolicyStatements: [
+                new PolicyStatement({
+                    effect: Effect.ALLOW,
+                    actions: [ 'sts:AssumeRole' ],
+                    resources: [ props.connectionRole.roleArn ],
+                }),
+            ],
         });
 
         const pipeline = new CodePipeline(this, `ClientPipeline-${props.clientName}-${props.pipelineEnv.name}`, {
