@@ -4,9 +4,10 @@ import { Construct } from 'constructs';
 import { Fabrics } from '../config/clients';
 import { Environments } from '../config/environments';
 import { ApplicationStage } from './application-stage';
+import { GlobalNetworkStage } from './global-network-stage';
 
 export class PipelineStack extends Stack {
-    constructor(scope: Construct, id: string, props?: StackProps) {
+    constructor(scope: Construct, id: string, props: StackProps) {
         super(scope, id, props);
 
         const pipeline = new CodePipeline(this, 'WorkbenchggPipeline', {
@@ -20,6 +21,10 @@ export class PipelineStack extends Stack {
                 commands: ['npm ci', 'npm run build', 'npx cdk synth']
             })
         });
+
+        pipeline.addStage(new GlobalNetworkStage(this, 'WorkbenchggNetworking', {
+            env: props.env,
+        }));
 
         pipeline.addStage(new ApplicationStage(this, 'WorkbenchggApplication-Dev', {
             env: {
@@ -46,7 +51,7 @@ export class PipelineStack extends Stack {
             {
                 pre: [
                     new ManualApprovalStep('ProdPromotion', {
-                        comment: 'Deploys to prod.'
+                        comment: 'Triggers deploy to prod.'
                     }),
                 ],
             },
