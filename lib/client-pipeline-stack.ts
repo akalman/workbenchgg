@@ -7,7 +7,7 @@ import { EnvironmentInfo } from '../config/environments';
 import { CodeStarConnectionsSourceAction, S3DeployAction } from 'aws-cdk-lib/aws-codepipeline-actions';
 import { Artifact } from 'aws-cdk-lib/aws-codepipeline';
 import { ConnectionArn } from '../config/constants';
-import { AnyPrincipal, Effect, IRole, PolicyStatement, Role } from 'aws-cdk-lib/aws-iam';
+import { AnyPrincipal, Effect, IRole, ManagedPolicy, PolicyStatement, Role } from 'aws-cdk-lib/aws-iam';
 
 export interface ClientStackProps extends StackProps {
     clientName: string;
@@ -36,6 +36,7 @@ export class ClientPipelineStack extends Stack {
             ],
             resources: [ ConnectionArn ],
         }));
+        role.addManagedPolicy(ManagedPolicy.fromAwsManagedPolicyName('AdministratorAccess'));
 
         const synthStep = new ShellStep(`ClientPipelineBuild-${props.clientName}-${props.pipelineEnv.name}`, {
             input: CodePipelineSource.connection(`${props.client.author}/${props.client.package}`, props.client.branch, {
