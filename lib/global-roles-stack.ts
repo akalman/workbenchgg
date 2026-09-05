@@ -21,16 +21,16 @@ export class GlobalRolesStack extends Stack {
             // ),
         });
 
-        connectionRole.assumeRolePolicy?.addStatements(new PolicyStatement({
-            effect: Effect.ALLOW,
-            principals: [ new ServicePrincipal('codebuild.amazonaws.com') ],
-            actions: [ 'sts:AssumeRole' ],
-            conditions: {
-                StringEquals: {
-                    'aws:SourceAccount': [ Environments.AppDev.id, Environments.AppProd.id ],
-                }
-            }
-        }));
+        // connectionRole.assumeRolePolicy?.addStatements(new PolicyStatement({
+        //     effect: Effect.ALLOW,
+        //     principals: [ new ServicePrincipal('codebuild.amazonaws.com') ],
+        //     actions: [ 'sts:AssumeRole' ],
+        //     conditions: {
+        //         StringEquals: {
+        //             'aws:SourceAccount': [ Environments.AppDev.id, Environments.AppProd.id ],
+        //         }
+        //     }
+        // }));
 
         connectionRole.addToPolicy(new PolicyStatement({
             actions: [
@@ -38,6 +38,7 @@ export class GlobalRolesStack extends Stack {
                 'codeconnections:GetConnection',
                 'codeconnections:GetConnectionToken',
                 'codeconnections:ListConnections',
+                'codeconnections:PassConnection',
             ],
             resources: [ ConnectionArn ],
         }));
