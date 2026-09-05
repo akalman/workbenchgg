@@ -9,6 +9,7 @@ export interface ApplicationStageProps extends StageProps {
     devEnv: EnvironmentInfo;
     prodEnv: EnvironmentInfo;
     fabric: Fabrics;
+    connection: string;
 }
 
 export class ApplicationStage extends Stage {
@@ -25,6 +26,7 @@ export class ApplicationStage extends Stage {
                     pipelineEnv: props.pipelineEnv,
                     devEnv: props.devEnv,
                     prodEnv: props.prodEnv,
+                    connection: props.connection,
                 });
             }
         });

@@ -2,7 +2,7 @@ import { Stack, StackProps } from 'aws-cdk-lib';
 import { CodePipeline, CodePipelineSource, ManualApprovalStep, ShellStep } from 'aws-cdk-lib/pipelines';
 import { Construct } from 'constructs';
 import { Fabrics } from '../config/clients';
-import { ConnectionArn } from '../config/constants';
+import { RootConnectionArn, DevConnectionArn } from '../config/constants';
 import { Environments } from '../config/environments';
 import { ApplicationStage } from './application-stage';
 import { GlobalResourcesStage } from './global-resources-stage';
@@ -16,7 +16,7 @@ export class PipelineStack extends Stack {
             crossAccountKeys: true,
             synth: new ShellStep('Synth', {
                 input: CodePipelineSource.connection('akalman/workbenchgg', 'master', {
-                    connectionArn: ConnectionArn,
+                    connectionArn: RootConnectionArn,
                     actionName: 'workbenchgg-source',
                 }),
                 commands: ['npm ci', 'npm run build', 'npx cdk synth']
@@ -36,6 +36,7 @@ export class PipelineStack extends Stack {
             devEnv: Environments.ClientSandboxDev,
             prodEnv: Environments.ClientSandboxDev,
             fabric: Fabrics.Sandbox,
+            connection: DevConnectionArn,
         }));
 
         pipeline.addStage(
@@ -48,6 +49,7 @@ export class PipelineStack extends Stack {
                 devEnv: Environments.ClientLiveDev,
                 prodEnv: Environments.ClientLiveProd,
                 fabric: Fabrics.Live,
+                connection: DevConnectionArn,
             }),
             {
                 pre: [
