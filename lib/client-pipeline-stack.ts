@@ -36,10 +36,17 @@ export class ClientPipelineStack extends Stack {
             synth: synthStep,
         });
 
-        // pipeline.buildPipeline();
-        // pipeline.pipeline.role.addToPrincipalPolicy(new PolicyStatement({
-        //     effect: Effect.ALLOW,
-
-        // }));
+        pipeline.buildPipeline();
+        pipeline.pipeline.role.addToPrincipalPolicy(new PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: [
+                'codeconnections:UseConnection',
+                'codeconnections:GetConnection',
+                'codeconnections:GetConnectionToken',
+                'codeconnections:ListConnections',
+                'codeconnections:PassConnection',
+            ],
+            resources: [ ConnectionArn ],
+        }));
     }
 }
