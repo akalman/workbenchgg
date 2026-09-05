@@ -20,12 +20,14 @@ export class ClientPipelineStack extends Stack {
         const pipeline = new CodePipeline(this, `ClientPipeline-${props.clientName}-${props.pipelineEnv.name}`, {
             pipelineName: `ClientPipelineStack-${props.clientName}-${props.pipelineEnv.name}`,
             crossAccountKeys: true,
+            selfMutation: false,
             synth: new ShellStep(`ClientPipelineBuild-${props.clientName}-${props.pipelineEnv.name}`, {
                 input: CodePipelineSource.connection(`${props.client.author}/${props.client.package}`, props.client.branch, {
                     actionName: `${props.clientName}-source`,
                     connectionArn: props.connection,
                 }),
                 commands: ['echo "Done."'],
+                primaryOutputDirectory: '.',
             }),
         });
     }
