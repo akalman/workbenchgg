@@ -35,7 +35,7 @@ export class ClientPipelineStack extends Stack {
         const pipeline = new CodePipeline(this, `ClientPipeline-${props.clientName}-${props.pipelineEnv.name}`, {
             pipelineName: `ClientPipelineStack-${props.clientName}-${props.pipelineEnv.name}`,
             crossAccountKeys: true,
-            selfMutation: false,
+            // selfMutation: false,
             synth: buildStep,
             codeBuildDefaults: {
                 rolePolicy: [
