@@ -6,6 +6,7 @@ import { EnvironmentInfo } from '../config/environments';
 import { Bucket, IBucket } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { join } from 'path';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
 export interface ClientStackProps extends StackProps {
     clientName: string;
@@ -26,7 +27,7 @@ export class ClientPipelineStack extends Stack {
                 actionName: `${props.clientName}-source`,
                 connectionArn: props.connection,
             }),
-            commands: [ 'ls -al', `aws s3 cp s3://${props.cdkBucket.bucketName}/workbenchgg .`, 'ls -al', 'echo "Done."' ],
+            commands: [ 'ls -al', `aws s3 cp s3://${props.cdkBucket.bucketName}/workbenchgg/ ./cdk-out/`, 'ls -al', 'echo "Done."' ],
             primaryOutputDirectory: '.',
         });
 
@@ -35,6 +36,15 @@ export class ClientPipelineStack extends Stack {
             crossAccountKeys: true,
             selfMutation: false,
             synth: buildStep,
+            codeBuildDefaults: {
+                rolePolicy: [
+                    new PolicyStatement({
+                        effect: Effect.ALLOW,
+                        actions: ['s3:GetObject'],
+                        resources: [props.cdkBucket.bucketArn, `${props.cdkBucket.bucketArn}/*`],
+                    }),
+                ],
+            },
         });
 
         const stage = new Stage(this, `ClientPipelineStage-${props.clientName}-${props.pipelineEnv.name}`, {
