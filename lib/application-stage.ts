@@ -4,6 +4,7 @@ import { Clients, Fabrics } from '../config/clients';
 import { EnvironmentInfo } from '../config/environments';
 import { ClientPipelineStack } from './client-pipeline-stack';
 import { IBucket } from 'aws-cdk-lib/aws-s3';
+import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 
 export interface ApplicationStageProps extends StageProps {
     pipelineEnv: EnvironmentInfo;
@@ -30,6 +31,7 @@ export class ApplicationStage extends Stage {
                     prodEnv: props.prodEnv,
                     connection: props.connection,
                     cdkBucket: props.cdkBucket,
+                    fabric: props.fabric,
                 });
             }
         });

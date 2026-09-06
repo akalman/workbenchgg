@@ -13,7 +13,10 @@ export class GlobalResourcesStage extends Stage {
         super(scope, id, props);
 
         const networkStack = new GlobalNetworkStack(this, 'WorkbenchggGlobalNetworkStack', {
-            env: props.env,
+            env: {
+                account: props.env?.account,
+                region: 'us-east-1',
+            },
         });
         this.network = networkStack;
 

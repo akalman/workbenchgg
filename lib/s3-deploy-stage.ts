@@ -7,6 +7,7 @@ export interface S3DeployStageProps extends StageProps {
     clientName: string;
     environment: EnvironmentInfo;
     scriptRoleArn: string;
+    clientSubdomain: string;
 }
 
 export class S3DeployStage extends Stage {
@@ -19,6 +20,7 @@ export class S3DeployStage extends Stage {
             clientName: props.clientName,
             environment: props.environment,
             scriptRoleArn: props.scriptRoleArn,
+            clientSubdomain: props.clientSubdomain,
         });
         this.stack = stack;
     }

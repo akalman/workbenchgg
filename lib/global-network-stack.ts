@@ -1,8 +1,9 @@
-import { Stack, StackProps } from 'aws-cdk-lib';
+import { CfnOutput, Stack, StackProps } from 'aws-cdk-lib';
 import { AccountPrincipal, CompositePrincipal, Role } from 'aws-cdk-lib/aws-iam';
 import { HostedZone } from 'aws-cdk-lib/aws-route53';
 import { Construct } from 'constructs';
 import { Environments } from '../config/environments';
+import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager';
 
 export class GlobalNetworkStack extends Stack {
     constructor(scope: Construct, id: string, props: StackProps) {
@@ -21,5 +22,16 @@ export class GlobalNetworkStack extends Stack {
         });
 
         hostedZone.grantDelegation(hostedZoneEditorRole);
+
+        const cert = new Certificate(this, 'WorkbenchggCertificate', {
+            domainName: 'workbench.gg',
+            subjectAlternativeNames: ['*.workbench.gg'],
+            validation: CertificateValidation.fromDns(hostedZone),
+        });
+
+        const certArn = new CfnOutput(this, 'WorkbenchggCertArn', {
+            value: cert.certificateArn,
+            exportName: 'WorkbenchggCertArn'
+        });
     }
 }
