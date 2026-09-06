@@ -27,7 +27,7 @@ export class ClientPipelineStack extends Stack {
                 actionName: `${props.clientName}-source`,
                 connectionArn: props.connection,
             }),
-            commands: [ 'ls -al', 'aws sts get-caller-identity', `aws s3 cp s3://${props.cdkBucket.bucketName}/workbenchgg/ ./cdk-out/`, 'ls -al', 'echo "Done."' ],
+            commands: [ 'ls -al', 'aws sts get-caller-identity', `aws s3 cp s3://${props.cdkBucket.bucketName}/workbenchgg/ ./cdk-out/ --recursive`, 'ls -al', 'echo "Done."' ],
             primaryOutputDirectory: '.',
         });
 
@@ -44,7 +44,6 @@ export class ClientPipelineStack extends Stack {
                             "s3:GetBucket*",
                             "s3:GetObject*",
                             "s3:List*",
-                            "s3:HeadObject",
                         ],
                         resources: [props.cdkBucket.bucketArn, `${props.cdkBucket.bucketArn}/*`],
                     }),
@@ -79,7 +78,6 @@ export class ClientPipelineStack extends Stack {
                 "s3:GetBucket*",
                 "s3:GetObject*",
                 "s3:List*",
-                "s3:HeadObject",
             ],
             resources: [props.cdkBucket.bucketArn, `${props.cdkBucket.bucketArn}/*`],
         }));
