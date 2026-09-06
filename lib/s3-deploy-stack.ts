@@ -24,6 +24,7 @@ export class S3DeployStack extends Stack {
             principals: [ new ArnPrincipal(props.scriptRoleArn) ],
             actions: [
                 "s3:PutObject*",
+                "s3:List*",
             ],
             resources: [bucket.bucketArn, `${bucket.bucketArn}/*`],
         }));

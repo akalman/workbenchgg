@@ -62,6 +62,7 @@ export class ClientPipelineStack extends Stack {
                         effect: Effect.ALLOW,
                         actions: [
                             "s3:PutObject*",
+                            "s3:List*",
                         ],
                         resources: [devDeploy.stack.bucket.bucketArn, `${devDeploy.stack.bucket.bucketArn}/*`],
                     }),
