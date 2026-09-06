@@ -39,7 +39,7 @@ export class ClientPipelineStack extends Stack {
             },
             clientName: props.clientName,
             environment: props.devEnv,
-            scriptRoleArn: "arn:aws:iam::957809771416:role/WorkbenchggApplication-De-ClientPipelineTestWTroubl-HfXxXeGr487L",
+            scriptRoleArn: "arn:aws:sts::957809771416:assumed-role/WorkbenchggApplication-De-ClientPipelineTestWTroubl-PllNPlrX7SpY",
         });
 
         const pipeline = new CodePipeline(this, `ClientPipeline-${props.clientName}-${props.pipelineEnv.name}`, {
