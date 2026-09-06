@@ -40,7 +40,11 @@ export class ClientPipelineStack extends Stack {
                 rolePolicy: [
                     new PolicyStatement({
                         effect: Effect.ALLOW,
-                        actions: ['s3:GetObject'],
+                        actions: [
+                            "s3:GetBucket*",
+                            "s3:GetObject*",
+                            "s3:List*",
+                        ],
                         resources: [props.cdkBucket.bucketArn, `${props.cdkBucket.bucketArn}/*`],
                     }),
                 ],
