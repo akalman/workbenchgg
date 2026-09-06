@@ -7,6 +7,7 @@ import { Bucket, IBucket } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { join } from 'path';
 import { ArnPrincipal, Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { S3DeployStage } from './s3-deploy-stage';
 
 export interface ClientStackProps extends StackProps {
     clientName: string;
@@ -51,24 +52,15 @@ export class ClientPipelineStack extends Stack {
             },
         });
 
-        const stage = new Stage(this, `ClientPipelineStage-${props.clientName}-${props.pipelineEnv.name}`, {
-            // env: {
-            //     account: props.devEnv.id,
-            //     region: props.devEnv.region,
-            // },
-            env: props.env,
+        const devDeploy = new S3DeployStage(this, `ClientPipelineDeploy-${props.clientName}-${props.devEnv.name}`, {
+            env: {
+                account: props.devEnv.id,
+                region: props.devEnv.region,
+            },
+            clientName: props.clientName,
+            environment: props.devEnv,
         });
-        const stack = new Stack(stage, `ClientPipelineStack-${props.clientName}-${props.pipelineEnv.name}`);
-        const bucket = new Bucket(stack, `ClientPipelineBucket-${props.clientName}-${props.pipelineEnv.name}`, {
-            bucketName: `ClientPipelineBucket-${props.clientName}-${props.pipelineEnv.name}`.toLocaleLowerCase(),
-        });
-        // const deployment = new BucketDeployment(stack, `ClientPipelineDeploy-${props.clientName}-${props.pipelineEnv.name}`, {
-        //     sources: [ Source.asset(join(__dirname, '.')) ],
-        //     destinationBucket: bucket,
-        // });
-
-
-        pipeline.addStage(stage, {
+        pipeline.addStage(devDeploy, {
             post: [
                 new ShellStep(`ClientPipelinePublish-${props.clientName}-${props.pipelineEnv.name}`, {
                     commands: [ 'ls -al', 'aws sts get-caller-identity']
