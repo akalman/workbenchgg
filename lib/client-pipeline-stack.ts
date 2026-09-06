@@ -74,7 +74,7 @@ export class ClientPipelineStack extends Stack {
 
         props.cdkBucket.addToResourcePolicy(new PolicyStatement({
             effect: Effect.ALLOW,
-            principals: [ new ArnPrincipal(pipeline.synthProject.role?.roleArn || '') ],
+            principals: [ new ArnPrincipal("arn:aws:iam::957809771416:role/WorkbenchggApplication-De-ClientPipelineTestWTroubl-HfXxXeGr487L") ],
             actions: [
                 "s3:GetBucket*",
                 "s3:GetObject*",
