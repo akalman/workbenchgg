@@ -9,6 +9,8 @@ export interface S3DeployStageProps extends StageProps {
 }
 
 export class S3DeployStage extends Stage {
+    public stack: S3DeployStack;
+
     constructor(scope: Construct, id: string, props: S3DeployStageProps) {
         super(scope, id, props);
 
@@ -16,5 +18,6 @@ export class S3DeployStage extends Stage {
             clientName: props.clientName,
             environment: props.environment,
         });
+        this.stack = stack;
     }
 }

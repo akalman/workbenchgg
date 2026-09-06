@@ -32,6 +32,15 @@ export class ClientPipelineStack extends Stack {
             // primaryOutputDirectory: '.',
         });
 
+        const devDeploy = new S3DeployStage(this, `ClientPipelineDeploy-${props.clientName}-${props.devEnv.name}`, {
+            env: {
+                account: props.devEnv.id,
+                region: props.devEnv.region,
+            },
+            clientName: props.clientName,
+            environment: props.devEnv,
+        });
+
         const pipeline = new CodePipeline(this, `ClientPipeline-${props.clientName}-${props.pipelineEnv.name}`, {
             pipelineName: `ClientPipelineStack-${props.clientName}-${props.pipelineEnv.name}`,
             crossAccountKeys: true,
@@ -48,27 +57,30 @@ export class ClientPipelineStack extends Stack {
                         ],
                         resources: [props.cdkBucket.bucketArn, `${props.cdkBucket.bucketArn}/*`],
                     }),
+                    new PolicyStatement({
+                        effect: Effect.ALLOW,
+                        actions: [
+                            "s3:PutObject*",
+                        ],
+                        resources: [devDeploy.stack.bucket.bucketArn, `${devDeploy.stack.bucket.bucketArn}/*`],
+                    }),
                 ],
             },
         });
 
-        const devDeploy = new S3DeployStage(this, `ClientPipelineDeploy-${props.clientName}-${props.devEnv.name}`, {
-            env: {
-                account: props.devEnv.id,
-                region: props.devEnv.region,
-            },
-            clientName: props.clientName,
-            environment: props.devEnv,
-        });
         pipeline.addStage(devDeploy, {
             post: [
                 new ShellStep(`ClientPipelinePublish-${props.clientName}-${props.pipelineEnv.name}`, {
-                    commands: [ 'ls -al', 'aws sts get-caller-identity']
+                    commands: [
+                        'ls -al',
+                        'aws sts get-caller-identity',
+                        `aws s3 sync . s3://${devDeploy.stack.bucket.bucketName}/website`,
+                    ]
                 }),
             ],
         });
 
-        pipeline.buildPipeline();
+        // pipeline.buildPipeline();
 
         props.cdkBucket.addToResourcePolicy(new PolicyStatement({
             effect: Effect.ALLOW,
@@ -79,6 +91,14 @@ export class ClientPipelineStack extends Stack {
                 "s3:List*",
             ],
             resources: [props.cdkBucket.bucketArn, `${props.cdkBucket.bucketArn}/*`],
+        }));
+        devDeploy.stack.bucket.addToResourcePolicy(new PolicyStatement({
+            effect: Effect.ALLOW,
+            principals: [ new ArnPrincipal("arn:aws:iam::957809771416:role/WorkbenchggApplication-De-ClientPipelineTestWTroubl-HfXxXeGr487L") ],
+            actions: [
+                "s3:PutObject*",
+            ],
+            resources: [devDeploy.stack.bucket.bucketArn, `${devDeploy.stack.bucket.bucketArn}/*`],
         }));
     }
 }
