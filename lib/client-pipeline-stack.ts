@@ -29,7 +29,7 @@ export class ClientPipelineStack extends Stack {
                 connectionArn: props.connection,
             }),
             commands: [ 'ls -al', 'aws sts get-caller-identity', `aws s3 cp s3://${props.cdkBucket.bucketName}/workbenchgg/ ./cdk.out/ --recursive`, 'ls -al', 'echo "Done."' ],
-            primaryOutputDirectory: '.',
+            // primaryOutputDirectory: '.',
         });
 
         const pipeline = new CodePipeline(this, `ClientPipeline-${props.clientName}-${props.pipelineEnv.name}`, {
