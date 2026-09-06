@@ -1,4 +1,4 @@
-import { CfnParameter, Stack, StackProps, stringToCloudFormation } from 'aws-cdk-lib';
+import { CfnParameter, RemovalPolicy, Stack, StackProps, stringToCloudFormation } from 'aws-cdk-lib';
 import { CodePipeline, CodePipelineSource, ManualApprovalStep, ShellStep } from 'aws-cdk-lib/pipelines';
 import { Construct } from 'constructs';
 import { Fabrics } from '../config/clients';
@@ -6,7 +6,7 @@ import { RootConnectionArn, DevConnectionArn } from '../config/constants';
 import { Environments } from '../config/environments';
 import { ApplicationStage } from './application-stage';
 import { GlobalResourcesStage } from './global-resources-stage';
-import { Bucket } from 'aws-cdk-lib/aws-s3';
+import { Bucket, BucketEncryption } from 'aws-cdk-lib/aws-s3';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
 export class PipelineStack extends Stack {
@@ -15,6 +15,8 @@ export class PipelineStack extends Stack {
 
         const bucket = new Bucket(this, 'WorkbenchggStore', {
             bucketName: 'workbenchgg-store',
+            encryption: BucketEncryption.S3_MANAGED,
+            removalPolicy: RemovalPolicy.DESTROY,
         });
 
         const pipeline = new CodePipeline(this, 'WorkbenchggPipeline', {

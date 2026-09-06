@@ -6,7 +6,7 @@ import { EnvironmentInfo } from '../config/environments';
 import { Bucket, IBucket } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { join } from 'path';
-import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { ArnPrincipal, Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
 export interface ClientStackProps extends StackProps {
     clientName: string;
@@ -41,9 +41,10 @@ export class ClientPipelineStack extends Stack {
                     new PolicyStatement({
                         effect: Effect.ALLOW,
                         actions: [
-                            "s3:Get*",
+                            "s3:GetBucket*",
+                            "s3:GetObject*",
                             "s3:List*",
-                            "s3:Head*",
+                            "s3:HeadObject",
                         ],
                         resources: [props.cdkBucket.bucketArn, `${props.cdkBucket.bucketArn}/*`],
                     }),
@@ -68,5 +69,19 @@ export class ClientPipelineStack extends Stack {
         });
 
         pipeline.addStage(stage);
+
+        pipeline.buildPipeline();
+
+        props.cdkBucket.addToResourcePolicy(new PolicyStatement({
+            effect: Effect.ALLOW,
+            principals: [ new ArnPrincipal(pipeline.synthProject.role?.roleArn || '') ],
+            actions: [
+                "s3:GetBucket*",
+                "s3:GetObject*",
+                "s3:List*",
+                "s3:HeadObject",
+            ],
+            resources: [props.cdkBucket.bucketArn, `${props.cdkBucket.bucketArn}/*`],
+        }));
     }
 }
