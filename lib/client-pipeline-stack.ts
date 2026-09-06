@@ -37,10 +37,11 @@ export class ClientPipelineStack extends Stack {
         });
 
         const stage = new Stage(this, `ClientPipelineStage-${props.clientName}-${props.pipelineEnv.name}`, {
-            env: {
-                account: props.devEnv.id,
-                region: props.devEnv.region,
-            }
+            // env: {
+            //     account: props.devEnv.id,
+            //     region: props.devEnv.region,
+            // },
+            env: props.env,
         });
         const stack = new Stack(stage, `ClientPipelineStack-${props.clientName}-${props.pipelineEnv.name}`);
         const bucket = new Bucket(stack, `ClientPipelineBucket-${props.clientName}-${props.pipelineEnv.name}`, {
