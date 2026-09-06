@@ -14,9 +14,9 @@ export class PipelineStack extends Stack {
         super(scope, id, props);
 
         const bucket = new Bucket(this, 'WorkbenchggStore', {
-            bucketName: 'workbenchgg-store-v3',
-            encryption: BucketEncryption.S3_MANAGED,
-            removalPolicy: RemovalPolicy.DESTROY,
+            bucketName: 'workbenchgg-store-v7',
+            // encryption: BucketEncryption.S3_MANAGED,
+            // removalPolicy: RemovalPolicy.DESTROY,
         });
 
         const pipeline = new CodePipeline(this, 'WorkbenchggPipeline', {

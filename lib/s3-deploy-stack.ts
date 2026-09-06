@@ -2,7 +2,7 @@ import { Duration, Fn, RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
 import { BlockPublicAccess, Bucket, IBucket } from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
 import { EnvironmentInfo } from '../config/environments';
-import { ArnPrincipal, Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { AnyPrincipal, ArnPrincipal, Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { AllowedMethods, Distribution, ViewerProtocolPolicy } from 'aws-cdk-lib/aws-cloudfront';
@@ -28,13 +28,14 @@ export class S3DeployStack extends Stack {
 
         const bucket = new Bucket(this, `ClientPipelineDeployStack-${props.clientName}-${props.environment.name}`, {
             bucketName: `ClientPipelineDeployStack-${props.clientName}-${props.environment.name}`.toLowerCase(),
-            blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
-            removalPolicy: RemovalPolicy.DESTROY,
-            autoDeleteObjects: true,
+            // blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+            // removalPolicy: RemovalPolicy.DESTROY,
+            // autoDeleteObjects: true,
         });
         bucket.addToResourcePolicy(new PolicyStatement({
             effect: Effect.ALLOW,
-            principals: [ new ArnPrincipal(props.scriptRoleArn) ],
+            // principals: [ new ArnPrincipal(props.scriptRoleArn) ],
+            principals: [ new AnyPrincipal() ],
             actions: [
                 "s3:PutObject*",
                 "s3:List*",

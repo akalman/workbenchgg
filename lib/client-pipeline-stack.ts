@@ -6,7 +6,7 @@ import { EnvironmentInfo } from '../config/environments';
 import { Bucket, IBucket } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { join } from 'path';
-import { ArnPrincipal, Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { AnyPrincipal, ArnPrincipal, Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { S3DeployStage } from './s3-deploy-stage';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 
@@ -46,7 +46,7 @@ export class ClientPipelineStack extends Stack {
             },
             clientName: props.clientName,
             environment: props.devEnv,
-            scriptRoleArn: "arn:aws:iam::957809771416:role/WorkbenchggApplication-De-ClientPipelineTestWTroubl-PllNPlrX7SpY",
+            scriptRoleArn: '',
             clientSubdomain: `${props.client.subdomain}.dev${ props.fabric == Fabrics.Staging ? '.staging' : '' }`,
         });
 
@@ -91,15 +91,16 @@ export class ClientPipelineStack extends Stack {
 
         pipeline.buildPipeline();
 
-        props.cdkBucket.addToResourcePolicy(new PolicyStatement({
-            effect: Effect.ALLOW,
-            principals: [ new ArnPrincipal("arn:aws:iam::957809771416:role/WorkbenchggApplication-De-ClientPipelineTestWTroubl-HfXxXeGr487L") ],
-            actions: [
-                "s3:GetBucket*",
-                "s3:GetObject*",
-                "s3:List*",
-            ],
-            resources: [props.cdkBucket.bucketArn, `${props.cdkBucket.bucketArn}/*`],
-        }));
+        // props.cdkBucket.addToResourcePolicy(new PolicyStatement({
+        //     effect: Effect.ALLOW,
+        //     // principals: [ new ArnPrincipal("arn:aws:iam::957809771416:role/WorkbenchggApplication-De-ClientPipelineTestWTroubl-HfXxXeGr487L") ],
+        //     principals: [ new AnyPrincipal() ],
+        //     actions: [
+        //         "s3:GetBucket*",
+        //         "s3:GetObject*",
+        //         "s3:List*",
+        //     ],
+        //     resources: [props.cdkBucket.bucketArn, `${props.cdkBucket.bucketArn}/*`],
+        // }));
     }
 }
