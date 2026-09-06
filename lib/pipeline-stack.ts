@@ -7,6 +7,7 @@ import { Environments } from '../config/environments';
 import { ApplicationStage } from './application-stage';
 import { GlobalResourcesStage } from './global-resources-stage';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
 export class PipelineStack extends Stack {
     constructor(scope: Construct, id: string, props: StackProps) {
@@ -67,5 +68,12 @@ export class PipelineStack extends Stack {
                 ],
             },
         );
+
+        pipeline.buildPipeline();
+        pipeline.pipeline.role.addToPrincipalPolicy(new PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: ['s3:PutObject'],
+            resources: [bucket.bucketArn],
+        }));
     }
 }
