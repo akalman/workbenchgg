@@ -62,12 +62,19 @@ export class ClientPipelineStack extends Stack {
         const bucket = new Bucket(stack, `ClientPipelineBucket-${props.clientName}-${props.pipelineEnv.name}`, {
             bucketName: `ClientPipelineBucket-${props.clientName}-${props.pipelineEnv.name}`.toLocaleLowerCase(),
         });
-        const deployment = new BucketDeployment(stack, `ClientPipelineDeploy-${props.clientName}-${props.pipelineEnv.name}`, {
-            sources: [ Source.asset(join(__dirname, '.')) ],
-            destinationBucket: bucket,
-        });
+        // const deployment = new BucketDeployment(stack, `ClientPipelineDeploy-${props.clientName}-${props.pipelineEnv.name}`, {
+        //     sources: [ Source.asset(join(__dirname, '.')) ],
+        //     destinationBucket: bucket,
+        // });
 
-        pipeline.addStage(stage);
+
+        pipeline.addStage(stage, {
+            post: [
+                new ShellStep(`ClientPipelinePublish-${props.clientName}-${props.pipelineEnv.name}`, {
+                    commands: [ 'ls -al', 'aws sts get-caller-identity']
+                }),
+            ],
+        });
 
         pipeline.buildPipeline();
 
