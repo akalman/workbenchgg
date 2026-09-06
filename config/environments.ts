@@ -18,36 +18,36 @@ export const Environments: EnvironmentsInfo = {
     'Root': {
         name: 'Root',
         id: '256157865211',
-        region: 'us-west-2',
+        region: 'us-east-1',
     },
     'AppDev': {
         name: 'AppDev',
         id: '957809771416',
-        region: 'us-west-2',
+        region: 'us-east-1',
     },
     'AppProd': {
         name: 'AppProd',
         id: '721903336580',
-        region: 'us-west-2',
+        region: 'us-east-1',
     },
     'ClientStagingDev': {
         name: 'ClientStagingDev',
         id: '450222979953',
-        region: 'us-west-2',
+        region: 'us-east-1',
     },
     'ClientStagingProd': {
         name: 'ClientStagingProd',
         id: '620694777998',
-        region: 'us-west-2',
+        region: 'us-east-1',
     },
     'ClientLiveDev': {
         name: 'ClientLiveDev',
         id: '561633118725',
-        region: 'us-west-2',
+        region: 'us-east-1',
     },
     'ClientLiveProd': {
         name: 'ClientLiveProd',
         id: '272973566406',
-        region: 'us-west-2',
+        region: 'us-east-1',
     },
 };
