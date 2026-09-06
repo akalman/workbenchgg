@@ -6,6 +6,7 @@ import { EnvironmentInfo } from '../config/environments';
 export interface S3DeployStageProps extends StageProps {
     clientName: string;
     environment: EnvironmentInfo;
+    scriptRoleArn: string;
 }
 
 export class S3DeployStage extends Stage {
@@ -17,6 +18,7 @@ export class S3DeployStage extends Stage {
         const stack = new S3DeployStack(this, `ClientPipelineDeploy-${props.clientName}-${props.environment.name}`, {
             clientName: props.clientName,
             environment: props.environment,
+            scriptRoleArn: props.scriptRoleArn,
         });
         this.stack = stack;
     }

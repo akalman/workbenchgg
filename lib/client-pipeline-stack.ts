@@ -39,6 +39,7 @@ export class ClientPipelineStack extends Stack {
             },
             clientName: props.clientName,
             environment: props.devEnv,
+            scriptRoleArn: "arn:aws:iam::957809771416:role/WorkbenchggApplication-De-ClientPipelineTestWTroubl-HfXxXeGr487L",
         });
 
         const pipeline = new CodePipeline(this, `ClientPipeline-${props.clientName}-${props.pipelineEnv.name}`, {
@@ -80,7 +81,7 @@ export class ClientPipelineStack extends Stack {
             ],
         });
 
-        // pipeline.buildPipeline();
+        pipeline.buildPipeline();
 
         props.cdkBucket.addToResourcePolicy(new PolicyStatement({
             effect: Effect.ALLOW,
@@ -91,14 +92,6 @@ export class ClientPipelineStack extends Stack {
                 "s3:List*",
             ],
             resources: [props.cdkBucket.bucketArn, `${props.cdkBucket.bucketArn}/*`],
-        }));
-        devDeploy.stack.bucket.addToResourcePolicy(new PolicyStatement({
-            effect: Effect.ALLOW,
-            principals: [ new ArnPrincipal("arn:aws:iam::957809771416:role/WorkbenchggApplication-De-ClientPipelineTestWTroubl-HfXxXeGr487L") ],
-            actions: [
-                "s3:PutObject*",
-            ],
-            resources: [devDeploy.stack.bucket.bucketArn, `${devDeploy.stack.bucket.bucketArn}/*`],
         }));
     }
 }
