@@ -1,4 +1,4 @@
-import { Stack, StackProps } from 'aws-cdk-lib';
+import { CfnParameter, Stack, StackProps, stringToCloudFormation } from 'aws-cdk-lib';
 import { CodePipeline, CodePipelineSource, ManualApprovalStep, ShellStep } from 'aws-cdk-lib/pipelines';
 import { Construct } from 'constructs';
 import { Fabrics } from '../config/clients';
@@ -6,10 +6,15 @@ import { RootConnectionArn, DevConnectionArn } from '../config/constants';
 import { Environments } from '../config/environments';
 import { ApplicationStage } from './application-stage';
 import { GlobalResourcesStage } from './global-resources-stage';
+import { Bucket } from 'aws-cdk-lib/aws-s3';
 
 export class PipelineStack extends Stack {
     constructor(scope: Construct, id: string, props: StackProps) {
         super(scope, id, props);
+
+        const bucket = new Bucket(this, 'WorkbenchggStore', {
+            bucketName: 'workbenchgg-store',
+        });
 
         const pipeline = new CodePipeline(this, 'WorkbenchggPipeline', {
             pipelineName: 'WorkbenchggPipeline',
@@ -19,13 +24,14 @@ export class PipelineStack extends Stack {
                     connectionArn: RootConnectionArn,
                     actionName: 'workbenchgg-source',
                 }),
-                commands: ['npm ci', 'npm run build', 'npx cdk synth']
-            })
+                commands: ['npm ci', 'npm run build', 'npx cdk synth', `aws s3 cp . s3://${bucket.bucketName}/workbenchgg`]
+            }),
         });
 
-        pipeline.addStage(new GlobalResourcesStage(this, 'WorkbenchggNetworking', {
+        const globals = new GlobalResourcesStage(this, 'WorkbenchggNetworking', {
             env: props.env,
-        }));
+        });
+        pipeline.addStage(globals);
 
         pipeline.addStage(new ApplicationStage(this, 'WorkbenchggApplication-Dev', {
             env: {
@@ -37,6 +43,7 @@ export class PipelineStack extends Stack {
             prodEnv: Environments.ClientStagingProd,
             fabric: Fabrics.Staging,
             connection: DevConnectionArn,
+            cdkBucket: bucket,
         }));
 
         pipeline.addStage(
@@ -50,6 +57,7 @@ export class PipelineStack extends Stack {
                 prodEnv: Environments.ClientLiveProd,
                 fabric: Fabrics.Live,
                 connection: DevConnectionArn,
+                cdkBucket: bucket,
             }),
             {
                 pre: [

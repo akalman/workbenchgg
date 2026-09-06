@@ -3,7 +3,7 @@ import { CodePipeline, CodePipelineSource, ShellStep } from 'aws-cdk-lib/pipelin
 import { Construct } from 'constructs';
 import { ClientInfo } from '../config/clients';
 import { EnvironmentInfo } from '../config/environments';
-import { Bucket } from 'aws-cdk-lib/aws-s3';
+import { Bucket, IBucket } from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { join } from 'path';
 
@@ -14,6 +14,7 @@ export interface ClientStackProps extends StackProps {
     devEnv: EnvironmentInfo;
     prodEnv: EnvironmentInfo;
     connection: string;
+    cdkBucket: IBucket;
 }
 
 export class ClientPipelineStack extends Stack {
@@ -25,7 +26,7 @@ export class ClientPipelineStack extends Stack {
                 actionName: `${props.clientName}-source`,
                 connectionArn: props.connection,
             }),
-            commands: ['echo "Done."'],
+            commands: [`ll; aws s3 cp s3://${props.cdkBucket.bucketName}/workbenchgg .; ll; echo "Done."`],
             primaryOutputDirectory: '.',
         });
 
