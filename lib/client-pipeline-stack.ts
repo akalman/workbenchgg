@@ -26,7 +26,7 @@ export class ClientPipelineStack extends Stack {
                 actionName: `${props.clientName}-source`,
                 connectionArn: props.connection,
             }),
-            commands: [ 'll', `aws s3 cp s3://${props.cdkBucket.bucketName}/workbenchgg .`, 'll', 'echo "Done."' ],
+            commands: [ 'ls -al', `aws s3 cp s3://${props.cdkBucket.bucketName}/workbenchgg .`, 'ls -al', 'echo "Done."' ],
             primaryOutputDirectory: '.',
         });
 
