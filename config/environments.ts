@@ -2,8 +2,8 @@ export interface EnvironmentsInfo {
     Root: EnvironmentInfo;
     AppDev: EnvironmentInfo;
     AppProd: EnvironmentInfo;
-    ClientSandboxDev: EnvironmentInfo;
-    ClientSandboxProd: EnvironmentInfo;
+    ClientStagingDev: EnvironmentInfo;
+    ClientStagingProd: EnvironmentInfo;
     ClientLiveDev: EnvironmentInfo;
     ClientLiveProd: EnvironmentInfo;
 }
@@ -30,24 +30,24 @@ export const Environments: EnvironmentsInfo = {
         id: '721903336580',
         region: 'us-west-2',
     },
-    'ClientSandboxDev': {
-        name: 'ClientSandboxDev',
-        id: '265308423083',
+    'ClientStagingDev': {
+        name: 'ClientStagingDev',
+        id: '450222979953',
         region: 'us-west-2',
     },
-    'ClientSandboxProd': {
-        name: 'ClientSandboxProd',
-        id: '398036158572',
+    'ClientStagingProd': {
+        name: 'ClientStagingProd',
+        id: '620694777998',
         region: 'us-west-2',
     },
     'ClientLiveDev': {
         name: 'ClientLiveDev',
-        id: '',
+        id: '561633118725',
         region: 'us-west-2',
     },
     'ClientLiveProd': {
         name: 'ClientLiveProd',
-        id: '',
+        id: '272973566406',
         region: 'us-west-2',
     },
 };

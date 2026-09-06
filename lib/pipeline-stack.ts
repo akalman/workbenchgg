@@ -33,9 +33,9 @@ export class PipelineStack extends Stack {
                 region: Environments.AppDev.region,
             },
             pipelineEnv: Environments.AppDev,
-            devEnv: Environments.ClientSandboxDev,
-            prodEnv: Environments.ClientSandboxDev,
-            fabric: Fabrics.Sandbox,
+            devEnv: Environments.ClientStagingDev,
+            prodEnv: Environments.ClientStagingProd,
+            fabric: Fabrics.Staging,
             connection: DevConnectionArn,
         }));
 
