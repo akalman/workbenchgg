@@ -24,7 +24,7 @@ export class PipelineStack extends Stack {
                     connectionArn: RootConnectionArn,
                     actionName: 'workbenchgg-source',
                 }),
-                commands: ['npm ci', 'npm run build', 'npx cdk synth', 'ls -al' ] //, `aws s3 cp . s3://${bucket.bucketName}/workbenchgg`]
+                commands: ['npm ci', 'npm run build', 'npx cdk synth', 'ls -al', `aws s3 cp cdk.out/* s3://${bucket.bucketName}/workbenchgg`]
             }),
         });
 
