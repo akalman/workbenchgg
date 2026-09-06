@@ -32,7 +32,7 @@ export class PipelineStack extends Stack {
                     new PolicyStatement({
                         effect: Effect.ALLOW,
                         actions: ['s3:PutObject'],
-                        resources: [bucket.bucketArn],
+                        resources: [bucket.bucketArn, `${bucket.bucketArn}/*`],
                     }),
                 ],
             },
