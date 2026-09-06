@@ -27,6 +27,15 @@ export class PipelineStack extends Stack {
                 }),
                 commands: ['npm ci', 'npm run build', 'npx cdk synth', 'ls -al', `aws s3 cp ./cdk.out/ s3://${bucket.bucketName}/workbenchgg/ --recursive`]
             }),
+            codeBuildDefaults: {
+                rolePolicy: [
+                    new PolicyStatement({
+                        effect: Effect.ALLOW,
+                        actions: ['s3:PutObject'],
+                        resources: [bucket.bucketArn],
+                    }),
+                ],
+            },
         });
 
         const globals = new GlobalResourcesStage(this, 'WorkbenchggNetworking', {
@@ -68,12 +77,5 @@ export class PipelineStack extends Stack {
                 ],
             },
         );
-
-        pipeline.buildPipeline();
-        pipeline.pipeline.role.addToPrincipalPolicy(new PolicyStatement({
-            effect: Effect.ALLOW,
-            actions: ['s3:PutObject'],
-            resources: [bucket.bucketArn],
-        }));
     }
 }
