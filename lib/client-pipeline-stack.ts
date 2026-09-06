@@ -27,7 +27,7 @@ export class ClientPipelineStack extends Stack {
                 actionName: `${props.clientName}-source`,
                 connectionArn: props.connection,
             }),
-            commands: [ 'ls -al', `aws s3 cp s3://${props.cdkBucket.bucketName}/workbenchgg/ ./cdk-out/`, 'ls -al', 'echo "Done."' ],
+            commands: [ 'ls -al', 'aws sts get-caller-identity', `aws s3 cp s3://${props.cdkBucket.bucketName}/workbenchgg/ ./cdk-out/`, 'ls -al', 'echo "Done."' ],
             primaryOutputDirectory: '.',
         });
 
