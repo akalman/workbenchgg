@@ -23,8 +23,8 @@ export class S3DeployStack extends Stack {
         super(scope, id, props);
 
         const fullDomain = `${props.clientSubdomain}.workbench.gg`;
-        const certArn = Fn.importValue('WorkbenchggCertArn');
-        const cert = Certificate.fromCertificateArn(this, `ClientCertRef-${props.clientName}-${props.environment.name}`, certArn)
+        const certArn = 'arn:aws:acm:us-east-1:256157865211:certificate/9d6da1c1-45f8-4b7a-a02f-d318519a1041';
+        const cert = Certificate.fromCertificateArn(this, `ClientCertRef-${props.clientName}-${props.environment.name}`, certArn);
 
         const bucket = new Bucket(this, `ClientPipelineDeployStack-${props.clientName}-${props.environment.name}`, {
             bucketName: `ClientPipelineDeployStack-${props.clientName}-${props.environment.name}`.toLowerCase(),

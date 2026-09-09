@@ -4,6 +4,7 @@ import { HostedZone } from 'aws-cdk-lib/aws-route53';
 import { Construct } from 'constructs';
 import { Environments } from '../config/environments';
 import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager';
+import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 
 export class GlobalNetworkStack extends Stack {
     constructor(scope: Construct, id: string, props: StackProps) {
@@ -27,11 +28,6 @@ export class GlobalNetworkStack extends Stack {
             domainName: 'workbench.gg',
             subjectAlternativeNames: ['*.workbench.gg'],
             validation: CertificateValidation.fromDns(hostedZone),
-        });
-
-        const certArn = new CfnOutput(this, 'WorkbenchggCertArn', {
-            value: cert.certificateArn,
-            exportName: 'WorkbenchggCertArn'
         });
     }
 }
