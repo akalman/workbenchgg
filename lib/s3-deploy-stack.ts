@@ -34,8 +34,7 @@ export class S3DeployStack extends Stack {
         });
         bucket.addToResourcePolicy(new PolicyStatement({
             effect: Effect.ALLOW,
-            // principals: [ new ArnPrincipal(props.scriptRoleArn) ],
-            principals: [ new AnyPrincipal() ],
+            principals: [ new ArnPrincipal(props.scriptRoleArn) ],
             actions: [
                 "s3:PutObject*",
                 "s3:List*",
