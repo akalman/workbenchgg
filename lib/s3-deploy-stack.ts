@@ -1,13 +1,13 @@
-import { Duration, Fn, RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
-import { BlockPublicAccess, Bucket, IBucket } from 'aws-cdk-lib/aws-s3';
-import { Construct } from 'constructs';
-import { EnvironmentInfo } from '../config/environments';
-import { AnyPrincipal, ArnPrincipal, Effect, PolicyStatement, Role } from 'aws-cdk-lib/aws-iam';
-import { ARecord, CrossAccountZoneDelegationRecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
+import { Duration, RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
 import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager';
 import { AllowedMethods, Distribution, ViewerProtocolPolicy } from 'aws-cdk-lib/aws-cloudfront';
 import { S3BucketOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
+import { ArnPrincipal, Effect, PolicyStatement, Role } from 'aws-cdk-lib/aws-iam';
+import { ARecord, CrossAccountZoneDelegationRecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
+import { BlockPublicAccess, Bucket, IBucket } from 'aws-cdk-lib/aws-s3';
+import { Construct } from 'constructs';
+import { EnvironmentInfo, Environments } from '../config/environments';
 
 export interface S3DeployStackProps extends StackProps {
     clientName: string;
@@ -23,18 +23,16 @@ export class S3DeployStack extends Stack {
         super(scope, id, props);
 
         const fullDomain = `${props.clientSubdomain}.workbench.gg`;
-        // const certArn = 'arn:aws:acm:us-east-1:256157865211:certificate/9d6da1c1-45f8-4b7a-a02f-d318519a1041';
-        // const cert = Certificate.fromCertificateArn(this, `ClientCertRef-${props.clientName}-${props.environment.name}`, certArn);
 
         const bucket = new Bucket(this, `ClientPipelineDeployStack-${props.clientName}-${props.environment.name}`, {
             bucketName: `ClientPipelineDeployStack-${props.clientName}-${props.environment.name}-v3`.toLowerCase(),
-            // blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
-            // removalPolicy: RemovalPolicy.DESTROY,
-            // autoDeleteObjects: true,
+            blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+            removalPolicy: RemovalPolicy.DESTROY,
+            autoDeleteObjects: true,
         });
         bucket.addToResourcePolicy(new PolicyStatement({
             effect: Effect.ALLOW,
-            principals: [ new ArnPrincipal(props.scriptRoleArn) ],
+            principals: [new ArnPrincipal(props.scriptRoleArn)],
             actions: [
                 "s3:PutObject*",
                 "s3:List*",
@@ -47,9 +45,7 @@ export class S3DeployStack extends Stack {
             zoneName: fullDomain,
         });
 
-        const parentHostedZoneEditorRole = Role.fromRoleArn(this,
-            `ClientZoneEditorRole-${props.clientName}-${props.environment.name}`,
-            'arn:aws:iam::256157865211:role/WorkbenchggHostedZoneEditorRole');
+        const parentHostedZoneEditorRole = Role.fromRoleArn(this, `ClientZoneEditorRole-${props.clientName}-${props.environment.name}`, Environments.Root.hostedZoneEditorRole);
 
         const delegateRecord = new CrossAccountZoneDelegationRecord(this, `ClientSubdomainDelegate-${props.clientName}-${props.environment.name}`, {
             delegatedZone: subdomainZone,
@@ -83,7 +79,7 @@ export class S3DeployStack extends Stack {
 
         const record = new ARecord(this, `ClientZoneRecord-${props.clientName}-${props.environment.name}`, {
             zone: subdomainZone,
-            recordName: fullDomain,
+            recordName: '',
             target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
         });
     }

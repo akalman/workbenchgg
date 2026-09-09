@@ -1,10 +1,9 @@
-import { CfnOutput, Stack, StackProps } from 'aws-cdk-lib';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager';
 import { AccountPrincipal, CompositePrincipal, Role } from 'aws-cdk-lib/aws-iam';
 import { HostedZone } from 'aws-cdk-lib/aws-route53';
 import { Construct } from 'constructs';
 import { Environments } from '../config/environments';
-import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager';
-import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 
 export class GlobalNetworkStack extends Stack {
     constructor(scope: Construct, id: string, props: StackProps) {
@@ -20,6 +19,9 @@ export class GlobalNetworkStack extends Stack {
                 new AccountPrincipal(Environments.AppDev.id),
                 new AccountPrincipal(Environments.AppProd.id),
                 new AccountPrincipal(Environments.ClientStagingDev.id),
+                // new AccountPrincipal(Environments.ClientStagingProd.id),
+                // new AccountPrincipal(Environments.ClientLiveDev.id),
+                // new AccountPrincipal(Environments.ClientLiveProd.id),
             ),
         });
 

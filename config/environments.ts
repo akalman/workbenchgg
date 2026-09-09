@@ -1,7 +1,7 @@
 export interface EnvironmentsInfo {
-    Root: EnvironmentInfo;
-    AppDev: EnvironmentInfo;
-    AppProd: EnvironmentInfo;
+    Root: RootEnvironmentInfo;
+    AppDev: ClientPipelineEnvironmentInfo;
+    AppProd: ClientPipelineEnvironmentInfo;
     ClientStagingDev: EnvironmentInfo;
     ClientStagingProd: EnvironmentInfo;
     ClientLiveDev: EnvironmentInfo;
@@ -14,26 +14,46 @@ export interface EnvironmentInfo {
     name: string;
 }
 
+export interface RootEnvironmentInfo extends EnvironmentInfo {
+    connectionArn: string;
+    hostedZoneEditorRole: string;
+}
+
+export interface ClientPipelineEnvironmentInfo extends EnvironmentInfo {
+    connectionArn: string;
+    buildScriptRole: string;
+    deployScriptRole: string;
+}
+
 export const Environments: EnvironmentsInfo = {
     'Root': {
         name: 'Root',
         id: '256157865211',
         region: 'us-east-1',
+        connectionArn: 'arn:aws:codeconnections:us-west-2:256157865211:connection/35e9901e-9116-43ef-be60-fe4640cabe78',
+        hostedZoneEditorRole: 'arn:aws:iam::256157865211:role/WorkbenchggHostedZoneEditorRole',
     },
     'AppDev': {
         name: 'AppDev',
         id: '957809771416',
         region: 'us-east-1',
+        connectionArn: 'arn:aws:codeconnections:us-west-2:957809771416:connection/87aa428e-a188-4c37-b014-b45d70da9425',
+        buildScriptRole: 'arn:aws:iam::957809771416:role/WorkbenchggApplication-De-ClientPipelineTestWTroubl-PsdDjxqsvOpr',
+        deployScriptRole: 'arn:aws:iam::957809771416:role/WorkbenchggApplication-De-ClientPipelineTestWTroubl-eD4hVf1SWi2k',
     },
     'AppProd': {
         name: 'AppProd',
         id: '721903336580',
         region: 'us-east-1',
+        connectionArn: 'arn:aws:codeconnections:us-west-2:957809771416:connection/87aa428e-a188-4c37-b014-b45d70da9425',
+        buildScriptRole: 'arn:aws:iam::256157865211:role/WorkbenchggHostedZoneEditorRole',
+        deployScriptRole: 'arn:aws:iam::256157865211:role/WorkbenchggHostedZoneEditorRole',
     },
     'ClientStagingDev': {
         name: 'ClientStagingDev',
         id: '450222979953',
         region: 'us-east-1',
+
     },
     'ClientStagingProd': {
         name: 'ClientStagingProd',

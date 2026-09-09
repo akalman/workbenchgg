@@ -1,8 +1,8 @@
 import { Stage, StageProps } from 'aws-cdk-lib';
 import { Construct } from "constructs";
+import { GlobalBucketsStack } from './global-buckets-stack';
 import { GlobalNetworkStack } from './global-network-stack';
 import { GlobalRolesStack } from './global-roles-stack';
-import { GlobalBucketsStack } from './global-buckets-stack';
 
 export class GlobalResourcesStage extends Stage {
     public network: GlobalNetworkStack;

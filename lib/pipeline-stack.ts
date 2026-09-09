@@ -1,13 +1,12 @@
-import { CfnParameter, RemovalPolicy, Stack, StackProps, stringToCloudFormation } from 'aws-cdk-lib';
+import { RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { Bucket, BucketEncryption } from 'aws-cdk-lib/aws-s3';
 import { CodePipeline, CodePipelineSource, ManualApprovalStep, ShellStep } from 'aws-cdk-lib/pipelines';
 import { Construct } from 'constructs';
 import { Fabrics } from '../config/clients';
-import { RootConnectionArn, DevConnectionArn } from '../config/constants';
 import { Environments } from '../config/environments';
 import { ApplicationStage } from './application-stage';
 import { GlobalResourcesStage } from './global-resources-stage';
-import { Bucket, BucketEncryption } from 'aws-cdk-lib/aws-s3';
-import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
 export class PipelineStack extends Stack {
     constructor(scope: Construct, id: string, props: StackProps) {
@@ -15,8 +14,8 @@ export class PipelineStack extends Stack {
 
         const bucket = new Bucket(this, 'WorkbenchggStore', {
             bucketName: 'workbenchgg-store-v7',
-            // encryption: BucketEncryption.S3_MANAGED,
-            // removalPolicy: RemovalPolicy.DESTROY,
+            encryption: BucketEncryption.S3_MANAGED,
+            removalPolicy: RemovalPolicy.DESTROY,
         });
 
         const pipeline = new CodePipeline(this, 'WorkbenchggPipeline', {
@@ -24,10 +23,16 @@ export class PipelineStack extends Stack {
             crossAccountKeys: true,
             synth: new ShellStep('Synth', {
                 input: CodePipelineSource.connection('akalman/workbenchgg', 'master', {
-                    connectionArn: RootConnectionArn,
+                    connectionArn: Environments.Root.connectionArn,
                     actionName: 'workbenchgg-source',
                 }),
-                commands: ['npm ci', 'npm run build', 'npx cdk synth', 'ls -al', `aws s3 cp ./cdk.out/ s3://${bucket.bucketName}/workbenchgg/ --recursive`]
+                commands: [
+                    'npm ci',
+                    'npm run build',
+                    'npx cdk synth',
+                    'ls -al',
+                    `aws s3 cp ./cdk.out/ s3://${bucket.bucketName}/workbenchgg/ --recursive`,
+                ],
             }),
             codeBuildDefaults: {
                 rolePolicy: [
@@ -54,7 +59,7 @@ export class PipelineStack extends Stack {
             devEnv: Environments.ClientStagingDev,
             prodEnv: Environments.ClientStagingProd,
             fabric: Fabrics.Staging,
-            connection: DevConnectionArn,
+            connection: Environments.AppDev.connectionArn,
             cdkBucket: bucket,
         }));
 
@@ -68,7 +73,7 @@ export class PipelineStack extends Stack {
                 devEnv: Environments.ClientLiveDev,
                 prodEnv: Environments.ClientLiveProd,
                 fabric: Fabrics.Live,
-                connection: DevConnectionArn,
+            connection: Environments.AppProd.connectionArn,
                 cdkBucket: bucket,
             }),
             {

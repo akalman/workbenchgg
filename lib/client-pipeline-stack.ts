@@ -1,19 +1,16 @@
-import { Stack, StackProps, Stage } from 'aws-cdk-lib';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { ArnPrincipal, Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { IBucket } from 'aws-cdk-lib/aws-s3';
 import { CodePipeline, CodePipelineSource, ShellStep } from 'aws-cdk-lib/pipelines';
 import { Construct } from 'constructs';
 import { ClientInfo, Fabrics } from '../config/clients';
-import { EnvironmentInfo } from '../config/environments';
-import { Bucket, IBucket } from 'aws-cdk-lib/aws-s3';
-import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
-import { join } from 'path';
-import { AnyPrincipal, ArnPrincipal, Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { ClientPipelineEnvironmentInfo, EnvironmentInfo } from '../config/environments';
 import { S3DeployStage } from './s3-deploy-stage';
-import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 
 export interface ClientStackProps extends StackProps {
     clientName: string;
     client: ClientInfo;
-    pipelineEnv: EnvironmentInfo;
+    pipelineEnv: ClientPipelineEnvironmentInfo;
     devEnv: EnvironmentInfo;
     prodEnv: EnvironmentInfo;
     connection: string;
@@ -24,6 +21,8 @@ export interface ClientStackProps extends StackProps {
 export class ClientPipelineStack extends Stack {
     constructor(scope: Construct, id: string, props: ClientStackProps) {
         super(scope, id, props);
+
+        // pipeline steps
 
         const buildStep = new ShellStep(`ClientPipelineBuild-${props.clientName}-${props.pipelineEnv.name}`, {
             input: CodePipelineSource.connection(`${props.client.author}/${props.client.package}`, props.client.branch, {
@@ -46,9 +45,22 @@ export class ClientPipelineStack extends Stack {
             },
             clientName: props.clientName,
             environment: props.devEnv,
-            scriptRoleArn: 'arn:aws:iam::957809771416:role/WorkbenchggApplication-De-ClientPipelineTestWTroubl-eD4hVf1SWi2k',
-            clientSubdomain: `${props.client.subdomain}.dev${ props.fabric == Fabrics.Staging ? '.staging' : '' }`,
+            scriptRoleArn: props.pipelineEnv.deployScriptRole,
+            clientSubdomain: `${props.client.subdomain}.dev${props.fabric == Fabrics.Staging ? '.staging' : ''}`,
         });
+
+        // const prodDeploy = new S3DeployStage(this, `ClientPipelineDeploy-${props.clientName}-${props.prodEnv.name}`, {
+        //     env: {
+        //         account: props.prodEnv.id,
+        //         region: props.prodEnv.region,
+        //     },
+        //     clientName: props.clientName,
+        //     environment: props.prodEnv,
+        //     scriptRoleArn: props.pipelineEnv.deployScriptRole,
+        //     clientSubdomain: `${props.client.subdomain}${props.fabric == Fabrics.Staging ? '.staging' : ''}`,
+        // });
+
+        // pipeline
 
         const pipeline = new CodePipeline(this, `ClientPipeline-${props.clientName}-${props.pipelineEnv.name}`, {
             pipelineName: `ClientPipelineStack-${props.clientName}-${props.pipelineEnv.name}`,
@@ -79,7 +91,7 @@ export class ClientPipelineStack extends Stack {
 
         pipeline.addStage(devDeploy, {
             post: [
-                new ShellStep(`ClientPipelinePublish-${props.clientName}-${props.pipelineEnv.name}`, {
+                new ShellStep(`ClientPipelinePublish-${props.clientName}-${props.devEnv.name}`, {
                     commands: [
                         'ls -al',
                         'aws sts get-caller-identity',
@@ -89,11 +101,23 @@ export class ClientPipelineStack extends Stack {
             ],
         });
 
+        // pipeline.addStage(prodDeploy, {
+        //     post: [
+        //         new ShellStep(`ClientPipelinePublish-${props.clientName}-${props.prodEnv.name}`, {
+        //             commands: [
+        //                 'ls -al',
+        //                 'aws sts get-caller-identity',
+        //                 `aws s3 sync . s3://${prodDeploy.stack.bucket.bucketName}/website`,
+        //             ]
+        //         }),
+        //     ],
+        // });
+
         pipeline.buildPipeline();
 
         props.cdkBucket.addToResourcePolicy(new PolicyStatement({
             effect: Effect.ALLOW,
-            principals: [ new ArnPrincipal("arn:aws:iam::957809771416:role/WorkbenchggApplication-De-ClientPipelineTestWTroubl-PsdDjxqsvOpr") ],
+            principals: [new ArnPrincipal(props.pipelineEnv.buildScriptRole)],
             actions: [
                 "s3:GetBucket*",
                 "s3:GetObject*",

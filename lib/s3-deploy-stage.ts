@@ -1,7 +1,7 @@
 import { Stage, StageProps } from 'aws-cdk-lib';
 import { Construct } from "constructs";
-import { S3DeployStack } from './s3-deploy-stack';
 import { EnvironmentInfo } from '../config/environments';
+import { S3DeployStack } from './s3-deploy-stack';
 
 export interface S3DeployStageProps extends StageProps {
     clientName: string;
