@@ -27,7 +27,7 @@ export class S3DeployStack extends Stack {
         const cert = Certificate.fromCertificateArn(this, `ClientCertRef-${props.clientName}-${props.environment.name}`, certArn);
 
         const bucket = new Bucket(this, `ClientPipelineDeployStack-${props.clientName}-${props.environment.name}`, {
-            bucketName: `ClientPipelineDeployStack-${props.clientName}-${props.environment.name}`.toLowerCase(),
+            bucketName: `ClientPipelineDeployStack-${props.clientName}-${props.environment.name}-v2`.toLowerCase(),
             // blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
             // removalPolicy: RemovalPolicy.DESTROY,
             // autoDeleteObjects: true,
@@ -49,7 +49,7 @@ export class S3DeployStack extends Stack {
 
         const parentHostedZoneEditorRole = Role.fromRoleArn(this,
             `ClientZoneEditorRole-${props.clientName}-${props.environment.name}`,
-            'arn:aws:iam::256157865211:role/WorkbenchggHostedZoneEditorRole')
+            'arn:aws:iam::256157865211:role/WorkbenchggHostedZoneEditorRole');
 
         const delegateRecord = new CrossAccountZoneDelegationRecord(this, `ClientSubdomainDelegate-${props.clientName}-${props.environment.name}`, {
             delegatedZone: subdomainZone,
