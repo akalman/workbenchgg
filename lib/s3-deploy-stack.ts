@@ -27,8 +27,8 @@ export class S3DeployStack extends Stack {
         const bucket = new Bucket(this, `ClientPipelineDeployStack-${props.clientName}-${props.environment.name}`, {
             bucketName: `ClientPipelineDeployStack-${props.clientName}-${props.environment.name}-v3`.toLowerCase(),
             blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
-            // removalPolicy: RemovalPolicy.DESTROY,
-            // autoDeleteObjects: true,
+            removalPolicy: RemovalPolicy.DESTROY,
+            autoDeleteObjects: true,
         });
         bucket.addToResourcePolicy(new PolicyStatement({
             effect: Effect.ALLOW,

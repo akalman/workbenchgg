@@ -38,8 +38,10 @@ export const Environments: EnvironmentsInfo = {
         id: '957809771416',
         region: 'us-east-1',
         connectionArn: 'arn:aws:codeconnections:us-west-2:957809771416:connection/87aa428e-a188-4c37-b014-b45d70da9425',
-        buildScriptRole: 'arn:aws:iam::957809771416:role/WorkbenchggApplication-De-ClientPipelineTestWTroubl-PsdDjxqsvOpr',
-        deployScriptRole: 'arn:aws:iam::957809771416:role/WorkbenchggApplication-De-ClientPipelineTestWTroubl-eD4hVf1SWi2k',
+        buildScriptRole: 'arn:aws:iam::256157865211:role/WorkbenchggHostedZoneEditorRole',
+        deployScriptRole: 'arn:aws:iam::256157865211:role/WorkbenchggHostedZoneEditorRole',
+        // buildScriptRole: 'arn:aws:iam::957809771416:role/WorkbenchggApplication-De-ClientPipelineTestWTroubl-PsdDjxqsvOpr',
+        // deployScriptRole: 'arn:aws:iam::957809771416:role/WorkbenchggApplication-De-ClientPipelineTestWTroubl-eD4hVf1SWi2k',
     },
     'AppProd': {
         name: 'AppProd',
