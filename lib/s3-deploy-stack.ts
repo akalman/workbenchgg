@@ -4,7 +4,7 @@ import { Construct } from 'constructs';
 import { EnvironmentInfo } from '../config/environments';
 import { AnyPrincipal, ArnPrincipal, Effect, PolicyStatement, Role } from 'aws-cdk-lib/aws-iam';
 import { ARecord, CrossAccountZoneDelegationRecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
-import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
+import { Certificate, CertificateValidation } from 'aws-cdk-lib/aws-certificatemanager';
 import { AllowedMethods, Distribution, ViewerProtocolPolicy } from 'aws-cdk-lib/aws-cloudfront';
 import { S3BucketOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
 import { CloudFrontTarget } from 'aws-cdk-lib/aws-route53-targets';
@@ -23,8 +23,8 @@ export class S3DeployStack extends Stack {
         super(scope, id, props);
 
         const fullDomain = `${props.clientSubdomain}.workbench.gg`;
-        const certArn = 'arn:aws:acm:us-east-1:256157865211:certificate/9d6da1c1-45f8-4b7a-a02f-d318519a1041';
-        const cert = Certificate.fromCertificateArn(this, `ClientCertRef-${props.clientName}-${props.environment.name}`, certArn);
+        // const certArn = 'arn:aws:acm:us-east-1:256157865211:certificate/9d6da1c1-45f8-4b7a-a02f-d318519a1041';
+        // const cert = Certificate.fromCertificateArn(this, `ClientCertRef-${props.clientName}-${props.environment.name}`, certArn);
 
         const bucket = new Bucket(this, `ClientPipelineDeployStack-${props.clientName}-${props.environment.name}`, {
             bucketName: `ClientPipelineDeployStack-${props.clientName}-${props.environment.name}-v3`.toLowerCase(),
@@ -47,15 +47,20 @@ export class S3DeployStack extends Stack {
             zoneName: fullDomain,
         });
 
-        // const parentHostedZoneEditorRole = Role.fromRoleArn(this,
-        //     `ClientZoneEditorRole-${props.clientName}-${props.environment.name}`,
-        //     'arn:aws:iam::256157865211:role/WorkbenchggHostedZoneEditorRole');
+        const parentHostedZoneEditorRole = Role.fromRoleArn(this,
+            `ClientZoneEditorRole-${props.clientName}-${props.environment.name}`,
+            'arn:aws:iam::256157865211:role/WorkbenchggHostedZoneEditorRole');
 
-        // const delegateRecord = new CrossAccountZoneDelegationRecord(this, `ClientSubdomainDelegate-${props.clientName}-${props.environment.name}`, {
-        //     delegatedZone: subdomainZone,
-        //     parentHostedZoneName: 'workbench.gg',
-        //     delegationRole: parentHostedZoneEditorRole,
-        // });
+        const delegateRecord = new CrossAccountZoneDelegationRecord(this, `ClientSubdomainDelegate-${props.clientName}-${props.environment.name}`, {
+            delegatedZone: subdomainZone,
+            parentHostedZoneName: 'workbench.gg',
+            delegationRole: parentHostedZoneEditorRole,
+        });
+
+        const cert = new Certificate(this, 'WorkbenchggCertificate', {
+            domainName: fullDomain,
+            validation: CertificateValidation.fromDns(subdomainZone),
+        });
 
         // const distribution = new Distribution(this, `ClientDistribution-${props.clientName}-${props.environment.name}`, {
         //     defaultBehavior: {

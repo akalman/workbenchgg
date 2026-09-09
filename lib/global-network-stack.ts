@@ -19,6 +19,7 @@ export class GlobalNetworkStack extends Stack {
             assumedBy: new CompositePrincipal(
                 new AccountPrincipal(Environments.AppDev.id),
                 new AccountPrincipal(Environments.AppProd.id),
+                new AccountPrincipal(Environments.ClientStagingDev.id),
             ),
         });
 
