@@ -2,8 +2,8 @@ import { Duration, Fn, RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
 import { BlockPublicAccess, Bucket, IBucket } from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
 import { EnvironmentInfo } from '../config/environments';
-import { AnyPrincipal, ArnPrincipal, Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
-import { ARecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
+import { AnyPrincipal, ArnPrincipal, Effect, PolicyStatement, Role } from 'aws-cdk-lib/aws-iam';
+import { ARecord, CrossAccountZoneDelegationRecord, HostedZone, RecordTarget } from 'aws-cdk-lib/aws-route53';
 import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
 import { AllowedMethods, Distribution, ViewerProtocolPolicy } from 'aws-cdk-lib/aws-cloudfront';
 import { S3BucketOrigin } from 'aws-cdk-lib/aws-cloudfront-origins';
@@ -45,6 +45,16 @@ export class S3DeployStack extends Stack {
 
         const subdomainZone = new HostedZone(this, `ClientSubdomainZone-${props.clientName}-${props.environment.name}`, {
             zoneName: fullDomain,
+        });
+
+        const parentHostedZoneEditorRole = Role.fromRoleArn(this,
+            `ClientZoneEditorRole-${props.clientName}-${props.environment.name}`,
+            'arn:aws:iam::256157865211:role/WorkbenchggHostedZoneEditorRole')
+
+        const delegateRecord = new CrossAccountZoneDelegationRecord(this, `ClientSubdomainDelegate-${props.clientName}-${props.environment.name}`, {
+            delegatedZone: subdomainZone,
+            parentHostedZoneName: 'workbench.gg',
+            delegationRole: parentHostedZoneEditorRole,
         });
 
         // const distribution = new Distribution(this, `ClientDistribution-${props.clientName}-${props.environment.name}`, {
