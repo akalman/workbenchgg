@@ -73,7 +73,7 @@ export class PipelineStack extends Stack {
                 devEnv: Environments.ClientLiveDev,
                 prodEnv: Environments.ClientLiveProd,
                 fabric: Fabrics.Live,
-            connection: Environments.AppProd.connectionArn,
+                connection: Environments.AppProd.connectionArn,
                 cdkBucket: bucket,
             }),
             {
