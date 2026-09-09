@@ -46,7 +46,7 @@ export class ClientPipelineStack extends Stack {
             },
             clientName: props.clientName,
             environment: props.devEnv,
-            scriptRoleArn: 'arn:aws:iam::957809771416:role/WorkbenchggApplication-De-ClientPipelineTestWTroubl-PsdDjxqsvOpr',
+            scriptRoleArn: 'arn:aws:iam::957809771416:role/WorkbenchggApplication-De-ClientPipelineTestWTroubl-eD4hVf1SWi2k',
             clientSubdomain: `${props.client.subdomain}.dev${ props.fabric == Fabrics.Staging ? '.staging' : '' }`,
         });
 
