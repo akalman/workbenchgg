@@ -22,14 +22,14 @@ export class ClientPipelineStack extends Stack {
     constructor(scope: Construct, id: string, props: ClientStackProps) {
         super(scope, id, props);
 
-        const pipelineRole = new Role(this, `ClientPipelineBuildRole-${props.clientName}-${props.pipelineEnv.name}`, {
+        const buildRole = new Role(this, `ClientPipelineBuildRole-${props.clientName}-${props.pipelineEnv.name}`, {
             roleName: `ClientPipelineBuildRole-${props.clientName}-${props.pipelineEnv.name}`,
             assumedBy: new CompositePrincipal(
                 new AccountPrincipal(props.pipelineEnv.id),
                 new ServicePrincipal('codebuild.amazonaws.com'),
             ),
         });
-        pipelineRole.addToPrincipalPolicy(new PolicyStatement({
+        buildRole.addToPrincipalPolicy(new PolicyStatement({
             effect: Effect.ALLOW,
             actions: [
                 "s3:GetBucket*",
@@ -67,7 +67,7 @@ export class ClientPipelineStack extends Stack {
                 'ls -al',
                 'echo "Done."'
             ],
-            role: pipelineRole
+            role: buildRole
         });
 
         const devDeploy = new S3DeployStage(this, `ClientPipelineDeploy-${props.clientName}-${props.devEnv.name}`, {
@@ -149,7 +149,7 @@ export class ClientPipelineStack extends Stack {
 
         props.cdkBucket.addToResourcePolicy(new PolicyStatement({
             effect: Effect.ALLOW,
-            principals: [new ArnPrincipal(props.pipelineEnv.buildScriptRole)],
+            principals: [new ArnPrincipal(buildRole.roleArn)],
             actions: [
                 "s3:GetBucket*",
                 "s3:GetObject*",
