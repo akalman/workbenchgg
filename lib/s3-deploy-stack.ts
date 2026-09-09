@@ -27,7 +27,7 @@ export class S3DeployStack extends Stack {
         const cert = Certificate.fromCertificateArn(this, `ClientCertRef-${props.clientName}-${props.environment.name}`, certArn);
 
         const bucket = new Bucket(this, `ClientPipelineDeployStack-${props.clientName}-${props.environment.name}`, {
-            bucketName: `ClientPipelineDeployStack-${props.clientName}-${props.environment.name}-v2`.toLowerCase(),
+            bucketName: `ClientPipelineDeployStack-${props.clientName}-${props.environment.name}-v3`.toLowerCase(),
             // blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
             // removalPolicy: RemovalPolicy.DESTROY,
             // autoDeleteObjects: true,
@@ -47,15 +47,15 @@ export class S3DeployStack extends Stack {
             zoneName: fullDomain,
         });
 
-        const parentHostedZoneEditorRole = Role.fromRoleArn(this,
-            `ClientZoneEditorRole-${props.clientName}-${props.environment.name}`,
-            'arn:aws:iam::256157865211:role/WorkbenchggHostedZoneEditorRole');
+        // const parentHostedZoneEditorRole = Role.fromRoleArn(this,
+        //     `ClientZoneEditorRole-${props.clientName}-${props.environment.name}`,
+        //     'arn:aws:iam::256157865211:role/WorkbenchggHostedZoneEditorRole');
 
-        const delegateRecord = new CrossAccountZoneDelegationRecord(this, `ClientSubdomainDelegate-${props.clientName}-${props.environment.name}`, {
-            delegatedZone: subdomainZone,
-            parentHostedZoneName: 'workbench.gg',
-            delegationRole: parentHostedZoneEditorRole,
-        });
+        // const delegateRecord = new CrossAccountZoneDelegationRecord(this, `ClientSubdomainDelegate-${props.clientName}-${props.environment.name}`, {
+        //     delegatedZone: subdomainZone,
+        //     parentHostedZoneName: 'workbench.gg',
+        //     delegationRole: parentHostedZoneEditorRole,
+        // });
 
         // const distribution = new Distribution(this, `ClientDistribution-${props.clientName}-${props.environment.name}`, {
         //     defaultBehavior: {
