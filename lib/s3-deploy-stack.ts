@@ -22,7 +22,7 @@ export class S3DeployStack extends Stack {
     constructor(scope: Construct, id: string, props: S3DeployStackProps) {
         super(scope, id, props);
 
-        const fullDomain = `://${props.clientSubdomain}.workbench.gg`;
+        const fullDomain = `${props.clientSubdomain}.workbench.gg`;
         const certArn = 'arn:aws:acm:us-east-1:256157865211:certificate/9d6da1c1-45f8-4b7a-a02f-d318519a1041';
         const cert = Certificate.fromCertificateArn(this, `ClientCertRef-${props.clientName}-${props.environment.name}`, certArn);
 
@@ -66,7 +66,7 @@ export class S3DeployStack extends Stack {
 
         const record = new ARecord(this, `ClientZoneRecord-${props.clientName}-${props.environment.name}`, {
             zone: subdomainZone,
-            recordName: fullDomain,
+            recordName: `://${fullDomain}`,
             target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
         });
     }
