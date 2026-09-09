@@ -47,27 +47,27 @@ export class S3DeployStack extends Stack {
             zoneName: fullDomain,
         });
 
-        const distribution = new Distribution(this, `ClientDistribution-${props.clientName}-${props.environment.name}`, {
-            defaultBehavior: {
-                origin: S3BucketOrigin.withOriginAccessControl(bucket),
-                viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-                allowedMethods: AllowedMethods.ALLOW_ALL,
-            },
-            domainNames: [fullDomain],
-            certificate: cert,
-            defaultRootObject: '/index.html',
-            errorResponses: [{
-                httpStatus: 403,
-                responseHttpStatus: 200,
-                responsePagePath: '/index.html',
-                ttl: Duration.minutes(10),
-            }],
-        });
+        // const distribution = new Distribution(this, `ClientDistribution-${props.clientName}-${props.environment.name}`, {
+        //     defaultBehavior: {
+        //         origin: S3BucketOrigin.withOriginAccessControl(bucket),
+        //         viewerProtocolPolicy: ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        //         allowedMethods: AllowedMethods.ALLOW_ALL,
+        //     },
+        //     domainNames: [fullDomain],
+        //     certificate: cert,
+        //     defaultRootObject: '/index.html',
+        //     errorResponses: [{
+        //         httpStatus: 403,
+        //         responseHttpStatus: 200,
+        //         responsePagePath: '/index.html',
+        //         ttl: Duration.minutes(10),
+        //     }],
+        // });
 
-        const record = new ARecord(this, `ClientZoneRecord-${props.clientName}-${props.environment.name}`, {
-            zone: subdomainZone,
-            recordName: fullDomain,
-            target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
-        });
+        // const record = new ARecord(this, `ClientZoneRecord-${props.clientName}-${props.environment.name}`, {
+        //     zone: subdomainZone,
+        //     recordName: fullDomain,
+        //     target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
+        // });
     }
 }
