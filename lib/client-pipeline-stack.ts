@@ -1,5 +1,5 @@
 import { Stack, StackProps } from 'aws-cdk-lib';
-import { AccountPrincipal, ArnPrincipal, Effect, PolicyStatement, Role } from 'aws-cdk-lib/aws-iam';
+import { AccountPrincipal, ArnPrincipal, CompositePrincipal, Effect, PolicyStatement, Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { IBucket } from 'aws-cdk-lib/aws-s3';
 import { CodeBuildStep, CodePipeline, CodePipelineSource, ShellStep } from 'aws-cdk-lib/pipelines';
 import { Construct } from 'constructs';
@@ -24,7 +24,10 @@ export class ClientPipelineStack extends Stack {
 
         const pipelineRole = new Role(this, `ClientPipelineBuildRole-${props.clientName}-${props.pipelineEnv.name}`, {
             roleName: `ClientPipelineBuildRole-${props.clientName}-${props.pipelineEnv.name}`,
-            assumedBy: new AccountPrincipal(props.pipelineEnv.id),
+            assumedBy: new CompositePrincipal(
+                new AccountPrincipal(props.pipelineEnv.id),
+                new ServicePrincipal('codebuild.amazonaws.com'),
+            ),
         });
         pipelineRole.addToPrincipalPolicy(new PolicyStatement({
             effect: Effect.ALLOW,
