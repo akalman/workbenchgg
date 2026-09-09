@@ -91,16 +91,16 @@ export class ClientPipelineStack extends Stack {
 
         pipeline.buildPipeline();
 
-        // props.cdkBucket.addToResourcePolicy(new PolicyStatement({
-        //     effect: Effect.ALLOW,
-        //     // principals: [ new ArnPrincipal("arn:aws:iam::957809771416:role/WorkbenchggApplication-De-ClientPipelineTestWTroubl-HfXxXeGr487L") ],
-        //     principals: [ new AnyPrincipal() ],
-        //     actions: [
-        //         "s3:GetBucket*",
-        //         "s3:GetObject*",
-        //         "s3:List*",
-        //     ],
-        //     resources: [props.cdkBucket.bucketArn, `${props.cdkBucket.bucketArn}/*`],
-        // }));
+        props.cdkBucket.addToResourcePolicy(new PolicyStatement({
+            effect: Effect.ALLOW,
+            // principals: [ new ArnPrincipal("arn:aws:iam::957809771416:role/WorkbenchggApplication-De-ClientPipelineTestWTroubl-HfXxXeGr487L") ],
+            principals: [ new AnyPrincipal() ],
+            actions: [
+                "s3:GetBucket*",
+                "s3:GetObject*",
+                "s3:List*",
+            ],
+            resources: [props.cdkBucket.bucketArn, `${props.cdkBucket.bucketArn}/*`],
+        }));
     }
 }
