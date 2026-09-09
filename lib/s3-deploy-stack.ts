@@ -44,7 +44,7 @@ export class S3DeployStack extends Stack {
         this.bucket = bucket;
 
         const subdomainZone = new HostedZone(this, `ClientSubdomainZone-${props.clientName}-${props.environment.name}`, {
-            zoneName: `subdomain`,
+            zoneName: fullDomain,
         });
 
         const distribution = new Distribution(this, `ClientDistribution-${props.clientName}-${props.environment.name}`, {
@@ -66,7 +66,7 @@ export class S3DeployStack extends Stack {
 
         const record = new ARecord(this, `ClientZoneRecord-${props.clientName}-${props.environment.name}`, {
             zone: subdomainZone,
-            recordName: `://${fullDomain}`,
+            recordName: fullDomain,
             target: RecordTarget.fromAlias(new CloudFrontTarget(distribution)),
         });
     }
