@@ -64,7 +64,7 @@ export class ClientPipelineStack extends Stack {
             },
             clientName: props.clientName,
             environment: props.devEnv,
-            scriptRoleArn: props.pipelineEnv.deployScriptRole,
+            scriptRoleArn: buildRole.roleArn,
             clientSubdomain: `${props.client.subdomain}.dev${props.fabric == Fabrics.Staging ? '.staging' : ''}`,
         });
 
