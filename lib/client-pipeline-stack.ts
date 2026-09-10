@@ -35,6 +35,7 @@ export class ClientPipelineStack extends Stack {
                 "s3:GetBucket*",
                 "s3:GetObject*",
                 "s3:List*",
+                "s3:PutObject*",
             ],
             resources: [props.cdkBucket.bucketArn, `${props.cdkBucket.bucketArn}/*`],
         }));
@@ -123,12 +124,13 @@ export class ClientPipelineStack extends Stack {
 
         pipeline.addStage(devDeploy, {
             post: [
-                new ShellStep(`ClientPipelinePublish-${props.clientName}-${props.devEnv.name}`, {
+                new CodeBuildStep(`ClientPipelinePublish-${props.clientName}-${props.devEnv.name}`, {
                     commands: [
                         'ls -al',
                         'aws sts get-caller-identity',
                         `aws s3 sync . s3://${devDeploy.stack.bucket.bucketName}/website`,
-                    ]
+                    ],
+                    role: buildRole
                 }),
             ],
         });
