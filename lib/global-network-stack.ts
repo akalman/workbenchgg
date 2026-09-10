@@ -19,9 +19,9 @@ export class GlobalNetworkStack extends Stack {
                 new AccountPrincipal(Environments.AppDev.id),
                 new AccountPrincipal(Environments.AppProd.id),
                 new AccountPrincipal(Environments.ClientStagingDev.id),
-                // new AccountPrincipal(Environments.ClientStagingProd.id),
-                // new AccountPrincipal(Environments.ClientLiveDev.id),
-                // new AccountPrincipal(Environments.ClientLiveProd.id),
+                new AccountPrincipal(Environments.ClientStagingProd.id),
+                new AccountPrincipal(Environments.ClientLiveDev.id),
+                new AccountPrincipal(Environments.ClientLiveProd.id),
             ),
         });
 
