@@ -42,20 +42,6 @@ export class ClientPipelineStack extends Stack {
 
         // pipeline steps
 
-        // const buildStep = new ShellStep(`ClientPipelineBuild-${props.clientName}-${props.pipelineEnv.name}`, {
-        //     input: CodePipelineSource.connection(`${props.client.author}/${props.client.package}`, props.client.branch, {
-        //         actionName: `${props.clientName}-source`,
-        //         connectionArn: props.connection,
-        //     }),
-        //     commands: [
-        //         'ls -al',
-        //         'aws sts get-caller-identity',
-        //         `aws s3 cp s3://${props.cdkBucket.bucketName}/workbenchgg/ ./cdk.out/ --recursive`,
-        //         'ls -al',
-        //         'echo "Done."'
-        //     ],
-        // });
-
         const buildStep = new CodeBuildStep(`ClientPipelineBuild-${props.clientName}-${props.pipelineEnv.name}`, {
             input: CodePipelineSource.connection(`${props.client.author}/${props.client.package}`, props.client.branch, {
                 actionName: `${props.clientName}-source`,
@@ -99,27 +85,6 @@ export class ClientPipelineStack extends Stack {
             pipelineName: `ClientPipelineStack-${props.clientName}-${props.pipelineEnv.name}`,
             crossAccountKeys: true,
             synth: buildStep,
-            // codeBuildDefaults: {
-            //     rolePolicy: [
-            //         new PolicyStatement({
-            //             effect: Effect.ALLOW,
-            //             actions: [
-            //                 "s3:GetBucket*",
-            //                 "s3:GetObject*",
-            //                 "s3:List*",
-            //             ],
-            //             resources: [props.cdkBucket.bucketArn, `${props.cdkBucket.bucketArn}/*`],
-            //         }),
-            //         new PolicyStatement({
-            //             effect: Effect.ALLOW,
-            //             actions: [
-            //                 "s3:PutObject*",
-            //                 "s3:List*",
-            //             ],
-            //             resources: [devDeploy.stack.bucket.bucketArn, `${devDeploy.stack.bucket.bucketArn}/*`],
-            //         }),
-            //     ],
-            // },
         });
 
         pipeline.addStage(devDeploy, {

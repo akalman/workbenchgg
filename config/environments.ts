@@ -21,8 +21,6 @@ export interface RootEnvironmentInfo extends EnvironmentInfo {
 
 export interface ClientPipelineEnvironmentInfo extends EnvironmentInfo {
     connectionArn: string;
-    buildScriptRole: string;
-    deployScriptRole: string;
 }
 
 export const Environments: EnvironmentsInfo = {
@@ -38,18 +36,12 @@ export const Environments: EnvironmentsInfo = {
         id: '957809771416',
         region: 'us-east-1',
         connectionArn: 'arn:aws:codeconnections:us-west-2:957809771416:connection/87aa428e-a188-4c37-b014-b45d70da9425',
-        buildScriptRole: 'arn:aws:iam::256157865211:role/WorkbenchggHostedZoneEditorRole',
-        deployScriptRole: 'arn:aws:iam::256157865211:role/WorkbenchggHostedZoneEditorRole',
-        // buildScriptRole: 'arn:aws:iam::957809771416:role/WorkbenchggApplication-De-ClientPipelineTestWTroubl-PsdDjxqsvOpr',
-        // deployScriptRole: 'arn:aws:iam::957809771416:role/WorkbenchggApplication-De-ClientPipelineTestWTroubl-eD4hVf1SWi2k',
     },
     'AppProd': {
         name: 'AppProd',
         id: '721903336580',
         region: 'us-east-1',
-        connectionArn: 'arn:aws:codeconnections:us-west-2:957809771416:connection/87aa428e-a188-4c37-b014-b45d70da9425',
-        buildScriptRole: 'arn:aws:iam::256157865211:role/WorkbenchggHostedZoneEditorRole',
-        deployScriptRole: 'arn:aws:iam::256157865211:role/WorkbenchggHostedZoneEditorRole',
+        connectionArn: 'arn:aws:codeconnections:us-east-1:721903336580:connection/ac6774c5-f138-4d02-90f0-1df7180e390f',
     },
     'ClientStagingDev': {
         name: 'ClientStagingDev',
