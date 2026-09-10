@@ -68,6 +68,17 @@ export class ClientPipelineStack extends Stack {
             clientSubdomain: `${props.client.subdomain}.dev${props.fabric == Fabrics.Staging ? '.staging' : ''}`,
         });
 
+        buildRole.addToPrincipalPolicy(new PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: [
+                "s3:GetBucket*",
+                "s3:GetObject*",
+                "s3:List*",
+                "s3:PutObject*",
+            ],
+            resources: [devDeploy.stack.bucket.bucketArn, `${devDeploy.stack.bucket.bucketArn}/*`],
+        }));
+
         // const prodDeploy = new S3DeployStage(this, `ClientPipelineDeploy-${props.clientName}-${props.prodEnv.name}`, {
         //     env: {
         //         account: props.prodEnv.id,
