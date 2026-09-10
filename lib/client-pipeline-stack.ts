@@ -147,15 +147,17 @@ export class ClientPipelineStack extends Stack {
 
         pipeline.buildPipeline();
 
-        props.cdkBucket.addToResourcePolicy(new PolicyStatement({
-            effect: Effect.ALLOW,
-            principals: [new ArnPrincipal(buildRole.roleArn)],
-            actions: [
-                "s3:GetBucket*",
-                "s3:GetObject*",
-                "s3:List*",
-            ],
-            resources: [props.cdkBucket.bucketArn, `${props.cdkBucket.bucketArn}/*`],
-        }));
+        if (props.fabric == Fabrics.Staging) {
+            props.cdkBucket.addToResourcePolicy(new PolicyStatement({
+                effect: Effect.ALLOW,
+                principals: [new ArnPrincipal(buildRole.roleArn)],
+                actions: [
+                    "s3:GetBucket*",
+                    "s3:GetObject*",
+                    "s3:List*",
+                ],
+                resources: [props.cdkBucket.bucketArn, `${props.cdkBucket.bucketArn}/*`],
+            }));
+        }
     }
 }
