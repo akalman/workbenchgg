@@ -79,16 +79,27 @@ export class ClientPipelineStack extends Stack {
             resources: [devDeploy.stack.bucket.bucketArn, `${devDeploy.stack.bucket.bucketArn}/*`],
         }));
 
-        // const prodDeploy = new S3DeployStage(this, `ClientPipelineDeploy-${props.clientName}-${props.prodEnv.name}`, {
-        //     env: {
-        //         account: props.prodEnv.id,
-        //         region: props.prodEnv.region,
-        //     },
-        //     clientName: props.clientName,
-        //     environment: props.prodEnv,
-        //     scriptRoleArn: props.pipelineEnv.deployScriptRole,
-        //     clientSubdomain: `${props.client.subdomain}${props.fabric == Fabrics.Staging ? '.staging' : ''}`,
-        // });
+        const prodDeploy = new S3DeployStage(this, `ClientPipelineDeploy-${props.clientName}-${props.prodEnv.name}`, {
+            env: {
+                account: props.prodEnv.id,
+                region: props.prodEnv.region,
+            },
+            clientName: props.clientName,
+            environment: props.prodEnv,
+            scriptRoleArn: buildRole.roleArn,
+            clientSubdomain: `${props.client.subdomain}.dev${props.fabric == Fabrics.Staging ? '.staging' : ''}`,
+        });
+
+        buildRole.addToPrincipalPolicy(new PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: [
+                "s3:GetBucket*",
+                "s3:GetObject*",
+                "s3:List*",
+                "s3:PutObject*",
+            ],
+            resources: [prodDeploy.stack.bucket.bucketArn, `${prodDeploy.stack.bucket.bucketArn}/*`],
+        }));
 
         // pipeline
 
@@ -111,17 +122,18 @@ export class ClientPipelineStack extends Stack {
             ],
         });
 
-        // pipeline.addStage(prodDeploy, {
-        //     post: [
-        //         new ShellStep(`ClientPipelinePublish-${props.clientName}-${props.prodEnv.name}`, {
-        //             commands: [
-        //                 'ls -al',
-        //                 'aws sts get-caller-identity',
-        //                 `aws s3 sync . s3://${prodDeploy.stack.bucket.bucketName}/website`,
-        //             ]
-        //         }),
-        //     ],
-        // });
+        pipeline.addStage(prodDeploy, {
+            post: [
+                new CodeBuildStep(`ClientPipelinePublish-${props.clientName}-${props.prodEnv.name}`, {
+                    commands: [
+                        'ls -al',
+                        'aws sts get-caller-identity',
+                        `aws s3 sync . s3://${prodDeploy.stack.bucket.bucketName}/website`,
+                    ],
+                    role: buildRole
+                }),
+            ],
+        });
 
         pipeline.buildPipeline();
 
