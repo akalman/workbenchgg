@@ -87,7 +87,7 @@ export class ClientPipelineStack extends Stack {
             clientName: props.clientName,
             environment: props.prodEnv,
             scriptRoleArn: buildRole.roleArn,
-            clientSubdomain: `${props.client.subdomain}.dev${props.fabric == Fabrics.Staging ? '.staging' : ''}`,
+            clientSubdomain: `${props.client.subdomain}${props.fabric == Fabrics.Staging ? '.staging' : ''}`,
         });
 
         buildRole.addToPrincipalPolicy(new PolicyStatement({
