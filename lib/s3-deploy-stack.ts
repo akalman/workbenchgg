@@ -49,7 +49,7 @@ export class S3DeployStack extends Stack {
 
         const delegateRecord = new CrossAccountZoneDelegationRecord(this, `ClientSubdomainDelegate-${props.clientName}-${props.environment.name}`, {
             delegatedZone: subdomainZone,
-            parentHostedZoneName: 'workbench.gg',
+            parentHostedZoneId: 'Z02091281R9I10FE3QR1T',
             delegationRole: parentHostedZoneEditorRole,
         });
 
