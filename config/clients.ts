@@ -31,4 +31,11 @@ export const Clients: ClientsInfo = {
         subdomain: 'test-game-tracker',
         fabrics: [Fabrics.Staging]
     },
+    'WTrouble': {
+        author: 'emunisa',
+        package: 'wrtouble',
+        branch: 'main',
+        subdomain: 'wtrouble',
+        fabrics: [Fabrics.Live]
+    },
 };
