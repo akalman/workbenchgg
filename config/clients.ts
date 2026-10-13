@@ -33,7 +33,7 @@ export const Clients: ClientsInfo = {
     },
     'WTrouble': {
         author: 'emunisa',
-        package: 'wrtouble',
+        package: 'wtrouble',
         branch: 'main',
         subdomain: 'wtrouble',
         fabrics: [Fabrics.Live]
